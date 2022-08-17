@@ -1870,7 +1870,7 @@
     			t22 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h20, anchor);
@@ -3362,7 +3362,7 @@
     			t12 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -3546,7 +3546,7 @@
     			t12 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -4693,7 +4693,7 @@
     			t12 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -5130,7 +5130,7 @@
     			t8 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -5540,7 +5540,7 @@
     			t14 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -5724,7 +5724,7 @@
     			t10 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -6641,7 +6641,7 @@
     			t10 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -6820,7 +6820,7 @@
     			t8 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -7189,7 +7189,7 @@
     			t11 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -7506,7 +7506,7 @@
     			t10 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -7701,7 +7701,7 @@
     			t16 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -7897,7 +7897,7 @@
     			t12 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -8081,7 +8081,7 @@
     			t12 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -8263,7 +8263,7 @@
     			t9 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -8852,7 +8852,7 @@
     			t22 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -9298,7 +9298,7 @@
     			t14 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -9491,7 +9491,7 @@
     			t14 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
@@ -9684,7 +9684,7 @@
     			t14 = space();
     			a = element("a");
     			a.textContent = "I want to hear your post-writing-this thoughts! Back to the blog!";
-    			attr(a, "href", "https://residentcontrarian.com");
+    			attr(a, "href", "https://www.residentcontrarian.com/p/post-interactive-nonfiction-thoughts");
     		},
     		m(target, anchor) {
     			insert(target, h2, anchor);
