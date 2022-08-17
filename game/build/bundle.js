@@ -3413,7 +3413,7 @@
 
     	return {
     		c() {
-    			t = text("Of course I don't - I think it's wrong to not maximize utility, we've covered this.");
+    			t = text("I do what I've judged is best - I think it's wrong to not maximize utility, we've covered this.");
     		},
     		m(target, anchor) {
     			insert(target, t, anchor);
@@ -3432,7 +3432,7 @@
 
     	return {
     		c() {
-    			t0 = text("Of course I do - you can't ");
+    			t0 = text("I respect James' preference - you can't ");
     			i = element("i");
     			i.textContent = "completely";
     			t2 = text(" disregard the desires of others.");
