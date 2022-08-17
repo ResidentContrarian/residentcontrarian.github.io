@@ -3432,7 +3432,7 @@
 
     	return {
     		c() {
-    			t0 = text("Of course I don't - you can't ");
+    			t0 = text("Of course I do - you can't ");
     			i = element("i");
     			i.textContent = "completely";
     			t2 = text(" disregard the desires of others.");
