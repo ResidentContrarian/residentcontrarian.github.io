@@ -2809,7 +2809,7 @@
     			h2.textContent = "What is Lying?";
     			t1 = space();
     			p0 = element("p");
-    			p0.textContent = "I'm interested in concepts related honesty and lies. If you are here you probably are too, even if only a bit.";
+    			p0.textContent = "I'm interested in concepts related to honesty and lies. If you are here you probably are too, even if only a bit.";
     			t3 = space();
     			p1 = element("p");
     			p1.textContent = "This is an exercise in defining a conceptual space. I want to give people an opportunity to sort of walk through the exact thoughts they have on lying - what makes it right, what makes it wrong, when they do it - as opposed to actually telling them what I think about it.";
