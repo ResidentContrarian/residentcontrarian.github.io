@@ -6,44 +6,66 @@
   <style>
     body { font-family: sans-serif; padding: 20px; }
     button { margin: 5px; padding: 10px; }
+    #buttons { margin-bottom: 20px; }
     #results { margin-top: 20px; border: 1px solid #ccc; padding: 15px; }
   </style>
 </head>
 <body>
   <h1>Author Filter</h1>
   
-  <!-- Buttons -->
-  <button onclick="filterAuthors('horror')">Horror</button>
-  <button onclick="filterAuthors('fantasy')">Fantasy</button>
-  <button onclick="filterAuthors('sci-fi')">Sci-Fi</button>
-  <button onclick="filterAuthors('all')">Show All</button>
+  <!-- Buttons will be injected here -->
+  <div id="buttons"></div>
   
   <!-- Results box -->
   <div id="results"></div>
   
   <script>
-    let authors = [];  // start empty
-    
-    // Load authors.json
-    fetch("authors.json")
-      .then(res => res.json())
-      .then(data => {
-        authors = data;
-        filterAuthors("all"); // show everyone once loaded
-      })
-      .catch(err => {
-        console.error("Error loading authors.json:", err);
+    let authors = [];
+    let tags = [];
+
+    // Load both tags.json and authors.json
+    Promise.all([
+      fetch("tags.json").then(res => res.json()),
+      fetch("authors.json").then(res => res.json())
+    ])
+    .then(([tagData, authorData]) => {
+      tags = tagData;
+      authors = authorData;
+
+      // 1. Build buttons from tags.json
+      const buttonBox = document.getElementById("buttons");
+
+      // "Show All" button
+      const allBtn = document.createElement("button");
+      allBtn.textContent = "Show All";
+      allBtn.onclick = () => filterAuthors("all");
+      buttonBox.appendChild(allBtn);
+
+      // One button per tag from tags.json
+      tags.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.textContent = tag[0].toUpperCase() + tag.slice(1); // capitalized
+        btn.onclick = () => filterAuthors(tag);
+        buttonBox.appendChild(btn);
       });
-    
+
+      // Show everyone by default
+      filterAuthors("all");
+    })
+    .catch(err => {
+      console.error("Error loading data:", err);
+    });
+
+    // Filter + display
     function filterAuthors(tag) {
       const box = document.getElementById("results");
-      box.innerHTML = ""; // clear old results
-      
+      box.innerHTML = "";
+
       let filtered = authors;
       if (tag !== "all") {
         filtered = authors.filter(a => a.tags.includes(tag));
       }
-      
+
       if (filtered.length === 0) {
         box.innerHTML = "<p>No authors match this category.</p>";
       } else {
@@ -51,7 +73,7 @@
           const link = document.createElement("a");
           link.href = a.url;
           link.textContent = a.name;
-          link.style.display = "block"; // one per line
+          link.style.display = "block";
           box.appendChild(link);
         });
       }
