@@ -1,95 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Author Filter</title>
   <style>
     body { font-family: system-ui, Arial, sans-serif; padding: 24px; }
-    #buttons { margin: 12px 0 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-    button.tag { padding: 8px 12px; border: 1px solid #999; background: #eee; cursor: pointer; border-radius: 6px; }
-    button.tag.active { background: #333; color: #fff; border-color: #333; }
-    button.small { padding: 6px 10px; }
-    .badge { font-size: 0.85em; opacity: 0.8; margin-left: 6px; }
+    #buttons { margin: 12px 0 20px; }
+    button { margin: 4px 6px 0 0; padding: 8px 12px; border: 1px solid #999; background: #eee; border-radius: 6px; cursor: pointer; }
     #results { border: 1px solid #ccc; padding: 16px; min-height: 40px; border-radius: 6px; }
     .msg { color: #666; }
-    a.card { display: block; padding: 8px 0; }
   </style>
 </head>
 <body>
   <h1>Author Filter</h1>
 
-  <div id="buttons">
-    <span class="msg">Loading tags…</span>
-  </div>
-
+  <div id="buttons"><span class="msg">Loading tags…</span></div>
   <div id="results"><span class="msg">Loading authors…</span></div>
 
+  <!-- Keep the script at the END of <body> so the DOM exists when we render -->
   <script>
     let authors = [];
     let tags = [];
-    const selected = new Set(); // active tag filters
 
-    // util: parse & write URL query ?tags=a,b
-    function getTagsFromURL() {
-      const p = new URLSearchParams(location.search);
-      const raw = (p.get("tags") || "").trim();
-      return raw ? raw.split(",").map(s => s.trim()).filter(Boolean) : [];
-    }
-    function setTagsInURL(list) {
-      const p = new URLSearchParams(location.search);
-      if (list.length) p.set("tags", list.join(","));
-      else p.delete("tags");
-      history.replaceState(null, "", `?${p.toString()}`);
-    }
-
-    // build buttons (with counts)
     function renderButtons() {
-      const box = document.getElementById("buttons");
-      box.innerHTML = "";
+      const buttonBox = document.getElementById("buttons");
+      buttonBox.innerHTML = "";
 
-      // Show All / Clear button
+      // Show All
       const allBtn = document.createElement("button");
-      allBtn.className = "small tag";
       allBtn.textContent = "Show All";
-      allBtn.onclick = () => {
-        selected.clear();
-        setTagsInURL([]);
-        renderButtons();
-        renderResults();
-      };
-      box.appendChild(allBtn);
+      allBtn.onclick = () => filterAuthors("all");
+      buttonBox.appendChild(allBtn);
 
-      // compute counts per tag (how many authors include each tag)
-      const counts = Object.fromEntries(tags.map(t => [t, 0]));
-      authors.forEach(a => (a.tags || []).forEach(t => { if (counts[t] != null) counts[t]++; }));
-
-      // one button per tag
+      // One per tag
       tags.forEach(tag => {
         const btn = document.createElement("button");
-        btn.className = "tag" + (selected.has(tag) ? " active" : "");
         btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
-
-        // add a small count badge
-        const b = document.createElement("span");
-        b.className = "badge";
-        b.textContent = `(${counts[tag]})`;
-        btn.appendChild(b);
-
-        btn.onclick = () => {
-          if (selected.has(tag)) selected.delete(tag);
-          else selected.add(tag);
-          setTagsInURL([...selected]);
-          renderButtons();
-          renderResults();
-        };
-        box.appendChild(btn);
+        btn.onclick = () => filterAuthors(tag);
+        buttonBox.appendChild(btn);
       });
     }
 
-    // results area
-    function renderResults() {
+    function filterAuthors(tag) {
       const box = document.getElementById("results");
       box.innerHTML = "";
 
-      // if none selected, show all
-      let
+      let filtered = authors;
+      if (tag !== "all") {
+        filtered = authors.filter(a => Array.isArray(a.tags) && a.tags.includes(tag));
+      }
+
+      if (!filtered.length) {
+        box.innerHTML = `<p class="msg">No authors match this category.</p>`;
+        return;
+      }
+
+      filtered.forEach(a => {
+        const link = document.createElement("a");
+        link.href = a.url;
+        link.textContent = a.name;
+        link.style.display = "block";
+        box.appendChild(link);
+      });
+    }
+
+    // Cache-bust while testing so stale JSON doesn't hang us
+    const bust = `v=${Date.now()}`;
+
+    Promise.all([
+      fetch(`tags.json?${bust}`).then(r => { if (!r.ok) throw new Error("tags.json " + r.status); return r.json(); }),
+      fetch(`authors.json?${bust}`).then(r => { if (!r.ok) throw new Error("authors.json " + r.status); return r.json(); })
+    ])
+    .then(([tagData, authorData]) => {
+      tags = tagData;        // e.g., ["horror","fantasy","sci-fi",...]
+      authors = authorData;  // e.g., [{name,url,tags:[...]}]
+
+      renderButtons();
+      filterAuthors("all");  // default view
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("buttons").innerHTML =
+        `<p style="color:#b00020;font-weight:600">Couldn't load data (${err.message}).</p>`;
+      document.getElementById("results").innerHTML =
+        `<p style="color:#b00020;font-weight:600">Couldn't load data (${err.message}).</p>`;
+    });
+  </script>
+</body>
+</html>
