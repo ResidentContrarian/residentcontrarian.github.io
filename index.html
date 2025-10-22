@@ -1,7 +1,61 @@
 <!DOCTYPE html>
-<html>
-<head><title>Hello</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Author Filter Demo</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { margin: 5px; padding: 10px; }
+    #results { margin-top: 20px; border: 1px solid #ccc; padding: 15px; }
+  </style>
+</head>
 <body>
-  <h1>Hello World</h1>
+  <h1>Author Filter</h1>
+  
+  <!-- Buttons -->
+  <button onclick="filterAuthors('horror')">Horror</button>
+  <button onclick="filterAuthors('fantasy')">Fantasy</button>
+  <button onclick="filterAuthors('sci-fi')">Sci-Fi</button>
+  <button onclick="filterAuthors('all')">Show All</button>
+  
+  <!-- Results box -->
+  <div id="results"></div>
+  
+  <script>
+    let authors = [];  // start empty
+    
+    // Load authors.json
+    fetch("authors.json")
+      .then(res => res.json())
+      .then(data => {
+        authors = data;
+        filterAuthors("all"); // show everyone once loaded
+      })
+      .catch(err => {
+        console.error("Error loading authors.json:", err);
+      });
+    
+    function filterAuthors(tag) {
+      const box = document.getElementById("results");
+      box.innerHTML = ""; // clear old results
+      
+      let filtered = authors;
+      if (tag !== "all") {
+        filtered = authors.filter(a => a.tags.includes(tag));
+      }
+      
+      if (filtered.length === 0) {
+        box.innerHTML = "<p>No authors match this category.</p>";
+      } else {
+        filtered.forEach(a => {
+          const link = document.createElement("a");
+          link.href = a.url;
+          link.textContent = a.name;
+          link.style.display = "block"; // one per line
+          box.appendChild(link);
+        });
+      }
+    }
+  </script>
 </body>
 </html>
