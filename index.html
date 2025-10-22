@@ -1,83 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Author Filter Demo</title>
+  <meta charset="UTF-8" />
+  <title>Author Filter</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
-    button { margin: 5px; padding: 10px; }
-    #buttons { margin-bottom: 20px; }
-    #results { margin-top: 20px; border: 1px solid #ccc; padding: 15px; }
+    #buttons { margin: 12px 0 20px; }
+    button { margin: 4px 6px 0 0; padding: 8px 12px; cursor: pointer; }
+    #results { border: 1px solid #ccc; padding: 15px; min-height: 40px; }
+    .msg { color: #666; }
+    .error { color: #b00020; font-weight: 600; }
   </style>
 </head>
 <body>
   <h1>Author Filter</h1>
-  
-  <!-- Buttons will be injected here -->
-  <div id="buttons"></div>
-  
-  <!-- Results box -->
-  <div id="results"></div>
-  
+
+  <div id="buttons"><span class="msg">Loading tags…</span></div>
+  <div id="results"><span class="msg">Loading authors…</span></div>
+
   <script>
     let authors = [];
     let tags = [];
 
-    // Load both tags.json and authors.json
-    Promise.all([
-      fetch("tags.json").then(res => res.json()),
-      fetch("authors.json").then(res => res.json())
-    ])
-    .then(([tagData, authorData]) => {
-      tags = tagData;
-      authors = authorData;
+    function showError(whereId, text) {
+      const el = document.getElementById(whereId);
+      el.innerHTML = `<p class="error">${text}</p>`;
+    }
 
-      // 1. Build buttons from tags.json
+    function renderButtons() {
       const buttonBox = document.getElementById("buttons");
+      buttonBox.innerHTML = "";
 
-      // "Show All" button
+      // "Show All"
       const allBtn = document.createElement("button");
       allBtn.textContent = "Show All";
       allBtn.onclick = () => filterAuthors("all");
       buttonBox.appendChild(allBtn);
 
-      // One button per tag from tags.json
+      // One per tag
       tags.forEach(tag => {
         const btn = document.createElement("button");
-        btn.textContent = tag[0].toUpperCase() + tag.slice(1); // capitalized
+        btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
         btn.onclick = () => filterAuthors(tag);
         buttonBox.appendChild(btn);
       });
+    }
 
-      // Show everyone by default
-      filterAuthors("all");
-    })
-    .catch(err => {
-      console.error("Error loading data:", err);
-    });
-
-    // Filter + display
     function filterAuthors(tag) {
       const box = document.getElementById("results");
       box.innerHTML = "";
 
       let filtered = authors;
       if (tag !== "all") {
-        filtered = authors.filter(a => a.tags.includes(tag));
+        filtered = authors.filter(a => Array.isArray(a.tags) && a.tags.includes(tag));
       }
 
-      if (filtered.length === 0) {
-        box.innerHTML = "<p>No authors match this category.</p>";
-      } else {
-        filtered.forEach(a => {
-          const link = document.createElement("a");
-          link.href = a.url;
-          link.textContent = a.name;
-          link.style.display = "block";
-          box.appendChild(link);
-        });
+      if (!filtered.length) {
+        box.innerHTML = `<p class="msg">No authors match this category.</p>`;
+        return;
       }
+
+      filtered.forEach(a => {
+        const link = document.createElement("a");
+        link.href = a.url;
+        link.textContent = a.name;
+        link.style.display = "block";
+        box.appendChild(link);
+      });
     }
+
+    // Load both files with clear errors
+    Promise.all([
+      fetch("tags.json").then(r => {
+        if (!r.ok) throw new Error(`tags.json ${r.status}`);
+        return r.json();
+      }),
+      fetch("authors.json").then(r => {
+        if (!r.ok) throw new Error(`authors.json ${r.status}`);
+        return r.json();
+      })
+    ])
+    .then(([tagData, authorData]) => {
+      if (!Array.isArray(tagData)) throw new Error("tags.json must be a JSON array of strings.");
+      if (!Array.isArray(authorData)) throw new Error("authors.json must be a JSON array of objects.");
+
+      tags = tagData;
+      authors = authorData;
+
+      renderButtons();        // build the buttons
+      filterAuthors("all");   // show everything by default
+    })
+    .catch(err => {
+      console.error(err);
+      // Decide which panel to blame based on message
+      const msg = String(err.message || err);
+      if (msg.includes("tags.json")) {
+        showError("buttons", `Couldn't load tags.json (${msg}). Is the file at the repo root and valid JSON?`);
+      }
+      if (msg.includes("authors.json")) {
+        showError("results", `Couldn't load authors.json (${msg}). Is the file at the repo root and valid JSON?`);
+      }
+      if (!msg.includes("tags.json") && !msg.includes("authors.json")) {
+        showError("buttons", "Unexpected error loading data. See console for details.");
+        showError("results", "Unexpected error loading data. See console for details.");
+      }
+    });
   </script>
 </body>
 </html>
