@@ -4,107 +4,92 @@
   <meta charset="UTF-8" />
   <title>Author Filter</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    #buttons { margin: 12px 0 20px; }
-    button { margin: 4px 6px 0 0; padding: 8px 12px; cursor: pointer; }
-    #results { border: 1px solid #ccc; padding: 15px; min-height: 40px; }
+    body { font-family: system-ui, Arial, sans-serif; padding: 24px; }
+    #buttons { margin: 12px 0 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+    button.tag { padding: 8px 12px; border: 1px solid #999; background: #eee; cursor: pointer; border-radius: 6px; }
+    button.tag.active { background: #333; color: #fff; border-color: #333; }
+    button.small { padding: 6px 10px; }
+    .badge { font-size: 0.85em; opacity: 0.8; margin-left: 6px; }
+    #results { border: 1px solid #ccc; padding: 16px; min-height: 40px; border-radius: 6px; }
     .msg { color: #666; }
-    .error { color: #b00020; font-weight: 600; }
+    a.card { display: block; padding: 8px 0; }
   </style>
 </head>
 <body>
   <h1>Author Filter</h1>
 
-  <div id="buttons"><span class="msg">Loading tags…</span></div>
+  <div id="buttons">
+    <span class="msg">Loading tags…</span>
+  </div>
+
   <div id="results"><span class="msg">Loading authors…</span></div>
 
   <script>
     let authors = [];
     let tags = [];
+    const selected = new Set(); // active tag filters
 
-    function showError(whereId, text) {
-      const el = document.getElementById(whereId);
-      el.innerHTML = `<p class="error">${text}</p>`;
+    // util: parse & write URL query ?tags=a,b
+    function getTagsFromURL() {
+      const p = new URLSearchParams(location.search);
+      const raw = (p.get("tags") || "").trim();
+      return raw ? raw.split(",").map(s => s.trim()).filter(Boolean) : [];
+    }
+    function setTagsInURL(list) {
+      const p = new URLSearchParams(location.search);
+      if (list.length) p.set("tags", list.join(","));
+      else p.delete("tags");
+      history.replaceState(null, "", `?${p.toString()}`);
     }
 
+    // build buttons (with counts)
     function renderButtons() {
-      const buttonBox = document.getElementById("buttons");
-      buttonBox.innerHTML = "";
+      const box = document.getElementById("buttons");
+      box.innerHTML = "";
 
-      // "Show All"
+      // Show All / Clear button
       const allBtn = document.createElement("button");
+      allBtn.className = "small tag";
       allBtn.textContent = "Show All";
-      allBtn.onclick = () => filterAuthors("all");
-      buttonBox.appendChild(allBtn);
+      allBtn.onclick = () => {
+        selected.clear();
+        setTagsInURL([]);
+        renderButtons();
+        renderResults();
+      };
+      box.appendChild(allBtn);
 
-      // One per tag
+      // compute counts per tag (how many authors include each tag)
+      const counts = Object.fromEntries(tags.map(t => [t, 0]));
+      authors.forEach(a => (a.tags || []).forEach(t => { if (counts[t] != null) counts[t]++; }));
+
+      // one button per tag
       tags.forEach(tag => {
         const btn = document.createElement("button");
+        btn.className = "tag" + (selected.has(tag) ? " active" : "");
         btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
-        btn.onclick = () => filterAuthors(tag);
-        buttonBox.appendChild(btn);
+
+        // add a small count badge
+        const b = document.createElement("span");
+        b.className = "badge";
+        b.textContent = `(${counts[tag]})`;
+        btn.appendChild(b);
+
+        btn.onclick = () => {
+          if (selected.has(tag)) selected.delete(tag);
+          else selected.add(tag);
+          setTagsInURL([...selected]);
+          renderButtons();
+          renderResults();
+        };
+        box.appendChild(btn);
       });
     }
 
-    function filterAuthors(tag) {
+    // results area
+    function renderResults() {
       const box = document.getElementById("results");
       box.innerHTML = "";
 
-      let filtered = authors;
-      if (tag !== "all") {
-        filtered = authors.filter(a => Array.isArray(a.tags) && a.tags.includes(tag));
-      }
-
-      if (!filtered.length) {
-        box.innerHTML = `<p class="msg">No authors match this category.</p>`;
-        return;
-      }
-
-      filtered.forEach(a => {
-        const link = document.createElement("a");
-        link.href = a.url;
-        link.textContent = a.name;
-        link.style.display = "block";
-        box.appendChild(link);
-      });
-    }
-
-    // Load both files with clear errors
-    Promise.all([
-      fetch("tags.json").then(r => {
-        if (!r.ok) throw new Error(`tags.json ${r.status}`);
-        return r.json();
-      }),
-      fetch("authors.json").then(r => {
-        if (!r.ok) throw new Error(`authors.json ${r.status}`);
-        return r.json();
-      })
-    ])
-    .then(([tagData, authorData]) => {
-      if (!Array.isArray(tagData)) throw new Error("tags.json must be a JSON array of strings.");
-      if (!Array.isArray(authorData)) throw new Error("authors.json must be a JSON array of objects.");
-
-      tags = tagData;
-      authors = authorData;
-
-      renderButtons();        // build the buttons
-      filterAuthors("all");   // show everything by default
-    })
-    .catch(err => {
-      console.error(err);
-      // Decide which panel to blame based on message
-      const msg = String(err.message || err);
-      if (msg.includes("tags.json")) {
-        showError("buttons", `Couldn't load tags.json (${msg}). Is the file at the repo root and valid JSON?`);
-      }
-      if (msg.includes("authors.json")) {
-        showError("results", `Couldn't load authors.json (${msg}). Is the file at the repo root and valid JSON?`);
-      }
-      if (!msg.includes("tags.json") && !msg.includes("authors.json")) {
-        showError("buttons", "Unexpected error loading data. See console for details.");
-        showError("results", "Unexpected error loading data. See console for details.");
-      }
-    });
-  </script>
-</body>
-</html>
+      // if none selected, show all
+      let
