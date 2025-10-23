@@ -97,5 +97,28 @@
         `<p style="color:#b00020;font-weight:600">Couldn't load data (${err.message}).</p>`;
     });
   </script>
+  <!DOCTYPE html>
+<html>
+<head>
+  <title>My Site</title>
+</head>
+<body>
+  <h1>Authors</h1>
+  <ul id="authors-list"></ul>
+
+  <script>
+    fetch("/authors.json")
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById("authors-list");
+        data.forEach(author => {
+          const li = document.createElement("li");
+          li.textContent = author.name;
+          list.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
 </body>
 </html>
