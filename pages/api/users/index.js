@@ -1,12 +1,23 @@
 // pages/api/users/index.js
+export const config = { runtime: 'nodejs' }; // ensure Node runtime, not edge
+
 import { neon } from '@neondatabase/serverless';
-const sql = neon(process.env.DATABASE_URL);
+
+let sql = null;
+function getSql() {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error('DATABASE_URL is not set');
+  if (!sql) sql = neon(url);
+  return sql;
+}
 
 export default async function handler(req, res) {
   try {
-    // quick probe so you can visit /api/users in the browser
+    // Health probe: should never 500
     if (req.method === 'GET') {
-      return res.status(200).json({ ok: true, probe: 'users route alive' });
+      return res
+        .status(200)
+        .json({ ok: true, probe: 'users route alive', hasDb: Boolean(process.env.DATABASE_URL) });
     }
 
     if (req.method !== 'POST') {
@@ -17,7 +28,8 @@ export default async function handler(req, res) {
     const uname = String(req.body?.username || '').trim().toLowerCase();
     if (!uname) return res.status(400).json({ ok: false, error: 'username required' });
 
-    const rows = await sql`
+    const db = getSql();
+    const rows = await db`
       INSERT INTO users (email, display_name, username, is_author)
       VALUES (${uname + '@local.local'}, ${uname}, ${uname}, false)
       ON CONFLICT (username) DO UPDATE SET display_name = EXCLUDED.display_name
