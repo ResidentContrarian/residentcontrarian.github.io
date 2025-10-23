@@ -1,6 +1,9 @@
 {
-  "name": "rrsite-api",
-  "private": true,
-  "type": "module",
-  "dependencies": { "pg": "8.11.3" }
+  "name": "residentcontrarian-site",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
 }
