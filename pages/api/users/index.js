@@ -1,31 +1,47 @@
+// pages/api/users/index.js
 import { neon } from '@neondatabase/serverless';
-const sql = neon(process.env.DATABASE_URL);
+
+let _sql = null;
+function getSql() {
+  const url = process.env.DATABASE_URL;
+  if (!_sql) {
+    if (!url) throw new Error('DATABASE_URL is not set');
+    _sql = neon(url);
+  }
+  return _sql;
+}
 
 export default async function handler(req, res) {
   try {
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', ['POST']);
-      return res.status(405).json({ ok: false, error: 'Method not allowed' });
-    }
-    const { username } = req.body || {};
-    if (!username || typeof username !== 'string') {
-      return res.status(400).json({ ok: false, error: 'username required' });
-    }
-    const uname = username.trim().toLowerCase();
-    if (!/^[a-z0-9][a-z0-9-_]{1,30}$/.test(uname)) {
-      return res.status(400).json({ ok: false, error: 'invalid username' });
+    // Health probe for quick testing
+    if (req.method === 'GET') {
+      return res.status(200).json({
+        ok: true,
+        probe: 'users route alive',
+        hasDb: Boolean(process.env.DATABASE_URL)
+      });
     }
 
-    // Upsert-style: try insert; on conflict, return existing
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', ['GET', 'POST']);
+      return res.status(405).json({ ok: false, error: 'Method not allowed' });
+    }
+
+    const uname = String(req.body?.username || '').trim().toLowerCase();
+    if (!uname) return res.status(400).json({ ok: false, error: 'username required' });
+
+    const sql = getSql();
+
     const rows = await sql`
       INSERT INTO users (email, display_name, username, is_author)
       VALUES (${uname + '@local.local'}, ${uname}, ${uname}, false)
       ON CONFLICT (username) DO UPDATE SET display_name = EXCLUDED.display_name
       RETURNING id, username, display_name;
     `;
-    res.status(200).json({ ok: true, user: rows[0] });
+
+    return res.status(200).json({ ok: true, user: rows[0] });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ ok: false, error: String(e?.message || e) });
+    console.error('users API error:', e);
+    return res.status(500).json({ ok: false, error: String(e?.message || e) });
   }
 }
