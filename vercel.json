@@ -1,8 +1,0 @@
-{
-  "outputDirectory": ".",
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/newuser", "destination": "/pages/newuser" },
-    { "source": "/u/:username", "destination": "/user.html?u=:username" }
-  ]
-}
