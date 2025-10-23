@@ -15,9 +15,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, error: 'Missing slug' });
     }
 
-    // Fetch 1 published, non-deleted story by slug (case-insensitive),
-    // include author pen_name and an array of tag slugs.
-    const rows = await sql`
+    // toggles & paging for chapters
+    const includeChapters = String(req.query.include_chapters || '').toLowerCase() === 'true';
+    const includeContent  = String(req.query.include_content  || '').toLowerCase() === 'true';
+    const chPage  = Math.max(parseInt(req.query.chapters_page  || '1', 10) || 1, 1);
+    const chLimit = Math.min(Math.max(parseInt(req.query.chapters_limit || '50', 10) || 50, 1), 100);
+    const chOffset = (chPage - 1) * chLimit;
+
+    // 1) fetch the story + author + tags
+    const storyRows = await sql`
       SELECT
         s.id,
         s.title,
@@ -47,9 +53,65 @@ export default async function handler(req, res) {
       LIMIT 1;
     `;
 
-    const story = rows[0];
+    const story = storyRows[0];
     if (!story) {
       return res.status(404).json({ ok: false, error: 'Story not found' });
+    }
+
+    // 2) optionally include chapters (published only, ordered)
+    let chapters = [];
+    let chaptersTotal = 0;
+
+    if (includeChapters) {
+      // total count for pagination
+      const totalRows = await sql`
+        SELECT COUNT(*)::int AS total
+        FROM chapters c
+        WHERE c.story_id = ${story.id}
+          AND c.deleted_at IS NULL
+          AND c.status = 'published'::status_enum
+      `;
+      chaptersTotal = totalRows[0]?.total || 0;
+
+      // page of chapters
+      if (includeContent) {
+        chapters = await sql`
+          SELECT
+            c.id,
+            c.ordinal,
+            c.title,
+            c.slug,
+            c.word_count,
+            c.published_at,
+            c.created_at,
+            c.updated_at,
+            c.content
+          FROM chapters c
+          WHERE c.story_id = ${story.id}
+            AND c.deleted_at IS NULL
+            AND c.status = 'published'::status_enum
+          ORDER BY c.ordinal ASC
+          LIMIT ${chLimit} OFFSET ${chOffset};
+        `;
+      } else {
+        chapters = await sql`
+          SELECT
+            c.id,
+            c.ordinal,
+            c.title,
+            c.slug,
+            c.word_count,
+            c.published_at,
+            c.created_at,
+            c.updated_at
+          FROM chapters c
+          WHERE c.story_id = ${story.id}
+            AND c.deleted_at IS NULL
+            AND c.status = 'published'::status_enum
+          ORDER BY c.ordinal ASC
+          LIMIT ${chLimit} OFFSET ${chOffset};
+        `;
+      }
     }
 
     return res.status(200).json({
@@ -66,7 +128,13 @@ export default async function handler(req, res) {
         created_at: story.created_at,
         updated_at: story.updated_at,
         tags: story.tags
-      }
+      },
+      chapters: includeChapters ? {
+        page: chPage,
+        limit: chLimit,
+        total: chaptersTotal,
+        items: chapters
+      } : undefined
     });
   } catch (err) {
     console.error(err);
