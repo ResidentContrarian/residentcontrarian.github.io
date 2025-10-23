@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Author Filter</title>
+  <title>Author Filter — AND</title>
   <style>
     body { font-family: system-ui, Arial, sans-serif; padding: 24px; }
-    #buttons { margin: 12px 0 20px; }
-    button { margin: 4px 6px 0 0; padding: 8px 12px; border: 1px solid #999; background: #eee; border-radius: 6px; cursor: pointer; }
+    #buttons { margin: 12px 0 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+    button { margin: 0; padding: 8px 12px; border: 1px solid #999; background: #eee; border-radius: 6px; cursor: pointer; }
+    button.active { background:#333; color:#fff; border-color:#333; }
     #results { border: 1px solid #ccc; padding: 16px; min-height: 40px; border-radius: 6px; }
-    .msg { color: #666; }
+    .msg { color:#666; }
+    a.card { display:block; padding:6px 0; }
   </style>
 </head>
 <body>
@@ -17,37 +19,48 @@
   <div id="buttons"><span class="msg">Loading tags…</span></div>
   <div id="results"><span class="msg">Loading authors…</span></div>
 
-  <!-- Keep the script at the END of <body> so the DOM exists when we render -->
   <script>
     let authors = [];
     let tags = [];
+    const selected = new Set(); // active tags
 
     function renderButtons() {
-      const buttonBox = document.getElementById("buttons");
-      buttonBox.innerHTML = "";
+      const box = document.getElementById("buttons");
+      box.innerHTML = "";
 
-      // Show All
+      // Show All = clear selection
       const allBtn = document.createElement("button");
       allBtn.textContent = "Show All";
-      allBtn.onclick = () => filterAuthors("all");
-      buttonBox.appendChild(allBtn);
+      allBtn.onclick = () => { selected.clear(); renderButtons(); renderResults(); };
+      box.appendChild(allBtn);
 
-      // One per tag
+      // One toggle button per tag
       tags.forEach(tag => {
         const btn = document.createElement("button");
         btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
-        btn.onclick = () => filterAuthors(tag);
-        buttonBox.appendChild(btn);
+        if (selected.has(tag)) btn.classList.add("active");
+        btn.onclick = () => {
+          selected.has(tag) ? selected.delete(tag) : selected.add(tag);
+          renderButtons();
+          renderResults();
+        };
+        box.appendChild(btn);
       });
     }
 
-    function filterAuthors(tag) {
+    function renderResults() {
       const box = document.getElementById("results");
       box.innerHTML = "";
 
+      // AND logic: if any tags selected, author must include ALL of them
       let filtered = authors;
-      if (tag !== "all") {
-        filtered = authors.filter(a => Array.isArray(a.tags) && a.tags.includes(tag));
+      if (selected.size) {
+        filtered = authors.filter(a => {
+          const t = Array.isArray(a.tags) ? a.tags : [];
+          // every selected tag must be present on the author
+          for (const s of selected) if (!t.includes(s)) return false;
+          return true;
+        });
       }
 
       if (!filtered.length) {
@@ -57,26 +70,24 @@
 
       filtered.forEach(a => {
         const link = document.createElement("a");
+        link.className = "card";
         link.href = a.url;
         link.textContent = a.name;
-        link.style.display = "block";
         box.appendChild(link);
       });
     }
 
-    // Cache-bust while testing so stale JSON doesn't hang us
+    // cache-bust while testing
     const bust = `v=${Date.now()}`;
-
     Promise.all([
       fetch(`tags.json?${bust}`).then(r => { if (!r.ok) throw new Error("tags.json " + r.status); return r.json(); }),
       fetch(`authors.json?${bust}`).then(r => { if (!r.ok) throw new Error("authors.json " + r.status); return r.json(); })
     ])
     .then(([tagData, authorData]) => {
-      tags = tagData;        // e.g., ["horror","fantasy","sci-fi",...]
-      authors = authorData;  // e.g., [{name,url,tags:[...]}]
-
+      tags = tagData;
+      authors = authorData;
       renderButtons();
-      filterAuthors("all");  // default view
+      renderResults(); // default: show all (no tags selected)
     })
     .catch(err => {
       console.error(err);
