@@ -1,6 +1,9 @@
-// api/create-user.js  (root-level "api" folder, not pages/)
+// api/create-user.js  (root-level "api" folder, same as get-tags.js)
 export default async function handler(req, res) {
   try {
+    if (req.method === 'GET') {
+      return res.status(200).json({ ok: true, note: 'create-user is live' });
+    }
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -9,8 +12,7 @@ export default async function handler(req, res) {
     const u = (username || '').trim();
     if (!u) return res.status(400).json({ error: 'Username required' });
 
-    // If you want DB writes later, do them here.
-    // For now we just return where to go next:
+    // (DB writes would go here later)
     return res.status(200).json({ ok: true, redirect: `/u/${encodeURIComponent(u)}` });
   } catch (e) {
     return res.status(500).json({ error: e.message || 'Server error' });
