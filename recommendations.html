@@ -221,20 +221,48 @@
         </div>
     </div>
 
+    <script
+        async
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_bWFueS1yb2Jpbi01Ni5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://many-robin-56.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+        type="text/javascript"
+    ></script>
+
     <script>
-        // Check if required data exists
-        const username = sessionStorage.getItem('username');
-        const selectedTags = JSON.parse(sessionStorage.getItem('selectedTags') || '[]');
+        let currentUser = null;
 
-        if (!username || selectedTags.length === 0) {
-            window.location.href = 'index.html';
-        }
+        window.addEventListener("load", async function () {
+            await Clerk.load();
 
-        // Update greeting
-        document.getElementById('greeting').textContent = `Hello, ${username}!`;
+            // Check if user is signed in
+            if (!Clerk.user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            currentUser = Clerk.user;
+
+            // Check if selected tags exist
+            const selectedTags = JSON.parse(sessionStorage.getItem('selectedTags') || '[]');
+            if (selectedTags.length === 0) {
+                window.location.href = 'select-tags.html';
+                return;
+            }
+
+            // Update greeting with user's name or email
+            const displayName = currentUser.firstName ||
+                               currentUser.fullName ||
+                               currentUser.primaryEmailAddress?.emailAddress ||
+                               'there';
+            document.getElementById('greeting').textContent = `Hello, ${displayName}!`;
+
+            // Load recommendations
+            loadRecommendations(selectedTags);
+        });
 
         // Fetch recommendations
-        async function loadRecommendations() {
+        async function loadRecommendations(selectedTags) {
             try {
                 const tagsParam = selectedTags.join(',');
                 const response = await fetch(`/api/recommendations?tags=${encodeURIComponent(tagsParam)}`);
@@ -291,9 +319,6 @@
             div.textContent = text;
             return div.innerHTML;
         }
-
-        // Load recommendations on page load
-        loadRecommendations();
     </script>
 </body>
 </html>

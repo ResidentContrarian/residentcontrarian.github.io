@@ -37,9 +37,9 @@ CREATE TABLE story_tags (
     PRIMARY KEY (story_id, tag_id)
 );
 
--- Optional: Users table (referenced but not strictly required for the current implementation)
+-- Users table: Stores user information from Clerk authentication
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,  -- Clerk user ID (e.g., 'user_xyz123')
     username VARCHAR(100) UNIQUE NOT NULL,
     display_name VARCHAR(255),
     email VARCHAR(255),
@@ -51,7 +51,7 @@ CREATE TABLE users (
 CREATE TABLE story_follows (
     id SERIAL PRIMARY KEY,
     story_id INTEGER REFERENCES stories(id) ON DELETE CASCADE,
-    user_id INTEGER,  -- Could reference a users table if you implement user accounts
+    user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(story_id, user_id)
 );

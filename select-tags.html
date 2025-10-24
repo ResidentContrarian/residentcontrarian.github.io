@@ -156,9 +156,38 @@
             font-weight: 600;
             margin-bottom: 20px;
         }
+
+        .user-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sign-out-btn {
+            background: #f5f5f5;
+            color: #333;
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .sign-out-btn:hover {
+            background: #e8e8e8;
+        }
     </style>
 </head>
 <body>
+    <div class="user-menu" id="userMenu" style="display: none;">
+        <span id="userEmail"></span>
+        <button class="sign-out-btn" onclick="handleSignOut()">Sign Out</button>
+    </div>
+
     <div class="container">
         <div class="step-indicator">Step 2 of 3</div>
         <h1>Select Your Favorite Genres</h1>
@@ -178,10 +207,38 @@
         </form>
     </div>
 
+    <script
+        async
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_bWFueS1yb2Jpbi01Ni5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://many-robin-56.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+        type="text/javascript"
+    ></script>
+
     <script>
-        // Check if username exists
-        const username = sessionStorage.getItem('username');
-        if (!username) {
+        let currentUser = null;
+
+        window.addEventListener("load", async function () {
+            await Clerk.load();
+
+            // Check if user is signed in
+            if (!Clerk.user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            currentUser = Clerk.user;
+
+            // Show user menu
+            document.getElementById('userMenu').style.display = 'block';
+            document.getElementById('userEmail').textContent = currentUser.primaryEmailAddress?.emailAddress || 'User';
+
+            // Load tags
+            loadTags();
+        });
+
+        async function handleSignOut() {
+            await Clerk.signOut();
             window.location.href = 'index.html';
         }
 
@@ -247,14 +304,11 @@
                 return;
             }
 
-            // Store selected tags
+            // Store selected tags in sessionStorage (temporary until we save to user profile)
             sessionStorage.setItem('selectedTags', JSON.stringify(selectedTags));
             // Navigate to recommendations page
             window.location.href = 'recommendations.html';
         });
-
-        // Load tags on page load
-        loadTags();
     </script>
 </body>
 </html>

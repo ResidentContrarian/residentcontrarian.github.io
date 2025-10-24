@@ -4,6 +4,8 @@
   "description": "Fiction recommendation website with genre tags",
   "type": "module",
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.3"
+    "@neondatabase/serverless": "^0.10.3",
+    "@clerk/clerk-sdk-node": "^4.13.0",
+    "svix": "^1.15.0"
   }
 }
