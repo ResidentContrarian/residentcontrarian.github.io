@@ -1,12 +1,12 @@
 // app/api/jane/route.js
-export const runtime = 'edge';
+export const runtime = 'nodejs'; // safer for Neon; switch to 'edge' later if you want
 
 import { NextResponse } from 'next/server';
-import { ensureSchema, upsertUserWithTags, getRecommendations, sql } from '../../../lib/db';
+import { sql, findUserByUsername, getRecommendationsByTags } from '../../../lib/db';
 
-function parseTags(raw) {
+function parseList(raw) {
   if (!raw) return [];
-  if (Array.isArray(raw)) return raw.flatMap(parseTags);
+  if (Array.isArray(raw)) return raw.flatMap(parseList);
   return String(raw)
     .split(/[,\s]+/g)
     .map(s => s.trim().toLowerCase())
@@ -14,44 +14,39 @@ function parseTags(raw) {
 }
 
 async function handle(payload) {
-  await ensureSchema();
+  const name = (payload.name || payload.username || '').trim(); // from form "name" field
+  const tags = parseList(payload.tags);
 
-  const name = (payload.name || '').trim();
-  const tags = parseTags(payload.tags);
+  // Try to look up the user by username; if not found, that's fine (we'll still do tag-only recs)
+  const user = name ? await findUserByUsername(name) : null;
 
-  if (!name) {
-    return NextResponse.json({ ok: false, error: 'Missing "name"' }, { status: 400 });
-  }
+  // Recommend by supplied tags; if none, fallback to top-by-followers
+  const recs = await getRecommendationsByTags({ tagSlugsOrNames: tags, limit: 12 });
 
-  const { user } = await upsertUserWithTags(name, tags);
-
-  const savedTags = await sql/*sql*/`
-    select t.name
-    from user_tags ut
-    join tags t on t.id = ut.tag_id
-    where ut.user_id = ${user.id}
-    order by t.name asc;
-  `;
-
-  let tagIds = [];
+  // Echo back the tags we actually matched (by resolving to rows)
+  let resolvedTags = [];
   if (tags.length) {
-    const rows = await sql/*sql*/`select id from tags where name = any (${tags});`;
-    tagIds = rows.map(r => r.id);
+    const rows = await sql(
+      `select name, slug
+         from tags
+        where lower(slug) = any($1) or lower(name) = any($1)
+        order by slug nulls last, name`,
+      [tags]
+    );
+    resolvedTags = rows.map(r => r.slug || r.name);
   }
-
-  const recs = await getRecommendations({ userId: user.id, tagIds });
 
   return NextResponse.json({
     ok: true,
-    user,
-    tags: savedTags.map(r => r.name),
+    user: user ? { id: user.id, username: user.username, display_name: user.display_name } : null,
+    tags: resolvedTags,
     recommendations: recs
   });
 }
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-  const name = searchParams.get('name') || '';
+  const name = searchParams.get('name') || searchParams.get('username') || '';
   const tags = searchParams.getAll('tags').length
     ? searchParams.getAll('tags')
     : searchParams.get('tags') || '';
