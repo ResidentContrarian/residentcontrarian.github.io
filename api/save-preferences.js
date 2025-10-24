@@ -22,6 +22,22 @@ export default async function handler(req, res) {
     const session = await clerk.sessions.getSession(sessionId);
     const userId = session.userId;
 
+    // Ensure user exists in database (auto-create if needed)
+    const user = await clerk.users.getUser(userId);
+    const primaryEmail = user.emailAddresses.find(e => e.id === user.primaryEmailAddressId);
+
+    await sql`
+      INSERT INTO users (id, username, email, display_name, created_at)
+      VALUES (
+        ${userId},
+        ${user.username || primaryEmail?.emailAddress || userId},
+        ${primaryEmail?.emailAddress},
+        ${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName || user.lastName || user.username || 'User'},
+        NOW()
+      )
+      ON CONFLICT (id) DO NOTHING
+    `;
+
     const { selectedTags, excludedTags, excludedContent } = req.body;
 
     if (!Array.isArray(selectedTags)) {
