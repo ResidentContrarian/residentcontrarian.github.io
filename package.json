@@ -1,0 +1,9 @@
+{
+  "name": "fiction-recommender",
+  "version": "1.0.0",
+  "description": "Fiction recommendation website with genre tags",
+  "type": "module",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.3"
+  }
+}

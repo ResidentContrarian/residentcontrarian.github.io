@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiction Recommendations - Enter Username</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .step-indicator {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="step-indicator">Step 1 of 3</div>
+        <h1>Welcome!</h1>
+        <p>Enter your username to get personalized fiction recommendations</p>
+
+        <form id="usernameForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="off"
+                >
+            </div>
+            <button type="submit">Continue to Tag Selection</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('usernameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+
+            if (username) {
+                // Store username in sessionStorage
+                sessionStorage.setItem('username', username);
+                // Navigate to tag selection page
+                window.location.href = 'select-tags.html';
+            }
+        });
+    </script>
+</body>
+</html>

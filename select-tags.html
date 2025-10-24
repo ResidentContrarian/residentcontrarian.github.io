@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiction Recommendations - Select Tags</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .step-indicator {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .tag-option {
+            position: relative;
+        }
+
+        .tag-option input[type="checkbox"] {
+            display: none;
+        }
+
+        .tag-option label {
+            display: block;
+            padding: 15px 20px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .tag-option input[type="checkbox"]:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tag-option label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button.secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        button.secondary:hover {
+            background: #e8e8e8;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .selection-count {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="step-indicator">Step 2 of 3</div>
+        <h1>Select Your Favorite Genres</h1>
+        <p>Choose one or more tags that interest you</p>
+
+        <div id="loadingMessage" class="loading">Loading tags...</div>
+        <div id="errorMessage" class="error" style="display: none;"></div>
+
+        <form id="tagsForm" style="display: none;">
+            <div class="selection-count" id="selectionCount">0 tags selected</div>
+            <div id="tagsGrid" class="tags-grid"></div>
+
+            <div class="action-buttons">
+                <button type="button" class="secondary" onclick="window.history.back()">Back</button>
+                <button type="submit" class="primary">Get Recommendations</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Check if username exists
+        const username = sessionStorage.getItem('username');
+        if (!username) {
+            window.location.href = 'index.html';
+        }
+
+        // Fetch tags from API
+        async function loadTags() {
+            try {
+                const response = await fetch('/api/tags');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tags');
+                }
+
+                const tags = await response.json();
+                displayTags(tags);
+            } catch (error) {
+                console.error('Error loading tags:', error);
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').textContent = 'Failed to load tags. Please try again.';
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        }
+
+        function displayTags(tags) {
+            const tagsGrid = document.getElementById('tagsGrid');
+            tagsGrid.innerHTML = '';
+
+            tags.forEach(tag => {
+                const tagOption = document.createElement('div');
+                tagOption.className = 'tag-option';
+                tagOption.innerHTML = `
+                    <input type="checkbox" id="tag-${tag.slug}" name="tags" value="${tag.slug}">
+                    <label for="tag-${tag.slug}">${tag.name}</label>
+                `;
+                tagsGrid.appendChild(tagOption);
+            });
+
+            // Show form, hide loading
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('tagsForm').style.display = 'block';
+
+            // Update selection count
+            updateSelectionCount();
+        }
+
+        function updateSelectionCount() {
+            const checkboxes = document.querySelectorAll('input[name="tags"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const selectedCount = document.querySelectorAll('input[name="tags"]:checked').length;
+                    document.getElementById('selectionCount').textContent = `${selectedCount} tag${selectedCount !== 1 ? 's' : ''} selected`;
+                });
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('tagsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const selectedTags = Array.from(document.querySelectorAll('input[name="tags"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedTags.length === 0) {
+                alert('Please select at least one tag');
+                return;
+            }
+
+            // Store selected tags
+            sessionStorage.setItem('selectedTags', JSON.stringify(selectedTags));
+            // Navigate to recommendations page
+            window.location.href = 'recommendations.html';
+        });
+
+        // Load tags on page load
+        loadTags();
+    </script>
+</body>
+</html>

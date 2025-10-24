@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiction Recommendations - Your Results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .step-indicator {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .loading {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: #666;
+        }
+
+        .error {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stories-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .story-title {
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .story-author {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .story-summary {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .story-meta {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .no-results {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .no-results h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .no-results p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .back-button {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="step-indicator">Step 3 of 3</div>
+            <h1 id="greeting">Hello!</h1>
+            <p class="subtitle">Here are your personalized fiction recommendations</p>
+        </div>
+
+        <div id="loadingMessage" class="loading">
+            Finding the perfect stories for you...
+        </div>
+
+        <div id="errorContainer" class="error" style="display: none;">
+            <div class="error-message" id="errorMessage"></div>
+            <button onclick="window.location.href='select-tags.html'">Try Again</button>
+        </div>
+
+        <div id="resultsContainer" style="display: none;">
+            <div class="stories-grid" id="storiesGrid"></div>
+
+            <div class="actions">
+                <button class="back-button" onclick="window.location.href='select-tags.html'">
+                    Select Different Tags
+                </button>
+            </div>
+        </div>
+
+        <div id="noResultsContainer" class="no-results" style="display: none;">
+            <h2>No Stories Found</h2>
+            <p>We couldn't find any stories matching your selected tags. Try selecting different tags!</p>
+            <button onclick="window.location.href='select-tags.html'">Choose Different Tags</button>
+        </div>
+    </div>
+
+    <script>
+        // Check if required data exists
+        const username = sessionStorage.getItem('username');
+        const selectedTags = JSON.parse(sessionStorage.getItem('selectedTags') || '[]');
+
+        if (!username || selectedTags.length === 0) {
+            window.location.href = 'index.html';
+        }
+
+        // Update greeting
+        document.getElementById('greeting').textContent = `Hello, ${username}!`;
+
+        // Fetch recommendations
+        async function loadRecommendations() {
+            try {
+                const tagsParam = selectedTags.join(',');
+                const response = await fetch(`/api/recommendations?tags=${encodeURIComponent(tagsParam)}`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch recommendations');
+                }
+
+                const stories = await response.json();
+                displayStories(stories);
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').textContent = 'Failed to load recommendations. Please try again.';
+                document.getElementById('errorContainer').style.display = 'block';
+            }
+        }
+
+        function displayStories(stories) {
+            document.getElementById('loadingMessage').style.display = 'none';
+
+            if (stories.length === 0) {
+                document.getElementById('noResultsContainer').style.display = 'block';
+                return;
+            }
+
+            const storiesGrid = document.getElementById('storiesGrid');
+            storiesGrid.innerHTML = '';
+
+            stories.forEach(story => {
+                const storyCard = document.createElement('div');
+                storyCard.className = 'story-card';
+                storyCard.innerHTML = `
+                    <div class="story-title">${escapeHtml(story.title)}</div>
+                    <div class="story-author">by ${escapeHtml(story.author_name || 'Unknown Author')}</div>
+                    ${story.summary ? `<div class="story-summary">${escapeHtml(story.summary)}</div>` : ''}
+                    <div class="story-meta">
+                        <div class="meta-item">
+                            <span>${story.follower_count || 0} followers</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="badge">${story.tag_match_count} tag match${story.tag_match_count !== 1 ? 'es' : ''}</span>
+                        </div>
+                    </div>
+                `;
+                storiesGrid.appendChild(storyCard);
+            });
+
+            document.getElementById('resultsContainer').style.display = 'block';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load recommendations on page load
+        loadRecommendations();
+    </script>
+</body>
+</html>
