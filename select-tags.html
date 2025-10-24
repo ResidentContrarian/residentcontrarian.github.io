@@ -114,36 +114,6 @@
             animation: slideIn 0.3s ease-out;
         }
 
-        /* Exclusion mode styling - red/negative */
-        body.exclusion-mode .selected-chip {
-            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
-        }
-
-        body.exclusion-mode .selected-categories h3 {
-            color: #d84a68;
-        }
-
-        body.exclusion-mode .category-header {
-            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
-        }
-
-        body.exclusion-mode .tag-option input[type="checkbox"]:checked + label {
-            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
-            border-color: #fc5c7d;
-        }
-
-        body.exclusion-mode .master-switch.selected {
-            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
-        }
-
-        body.exclusion-mode button.primary {
-            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
-        }
-
-        body.exclusion-mode button.primary:hover {
-            box-shadow: 0 10px 20px rgba(252, 92, 125, 0.4);
-        }
-
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -454,6 +424,9 @@
         let masterSwitches = {};
         let contentWarnings = [];
 
+        // Track which categories are collapsed
+        let collapsedCategories = new Set();
+
         window.addEventListener("load", async function () {
             await Clerk.load();
 
@@ -538,13 +511,6 @@
             const skipBtn = document.getElementById('skipBtn');
             const backBtn = document.getElementById('backBtn');
             const continueBtn = document.getElementById('continueBtn');
-
-            // Apply exclusion mode styling for phases 2 and 3
-            if (currentPhase === 2 || currentPhase === 3) {
-                document.body.classList.add('exclusion-mode');
-            } else {
-                document.body.classList.remove('exclusion-mode');
-            }
 
             if (currentPhase === 1) {
                 // Phase 1: Genre Selection
@@ -685,6 +651,11 @@
                 box.appendChild(header);
                 box.appendChild(content);
                 container.appendChild(box);
+
+                // Restore collapsed state
+                if (collapsedCategories.has(category)) {
+                    box.classList.add('collapsed');
+                }
             });
         }
 
@@ -750,7 +721,13 @@
 
         function toggleCategory(category) {
             const box = document.getElementById(`category-${category}`);
-            box.classList.toggle('collapsed');
+            if (box.classList.contains('collapsed')) {
+                box.classList.remove('collapsed');
+                collapsedCategories.delete(category);
+            } else {
+                box.classList.add('collapsed');
+                collapsedCategories.add(category);
+            }
         }
 
         function handleMasterSwitch(category, slug, checked) {
