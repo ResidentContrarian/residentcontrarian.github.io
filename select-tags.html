@@ -114,6 +114,36 @@
             animation: slideIn 0.3s ease-out;
         }
 
+        /* Exclusion mode styling - red/negative */
+        body.exclusion-mode .selected-chip {
+            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
+        }
+
+        body.exclusion-mode .selected-categories h3 {
+            color: #d84a68;
+        }
+
+        body.exclusion-mode .category-header {
+            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
+        }
+
+        body.exclusion-mode .tag-option input[type="checkbox"]:checked + label {
+            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
+            border-color: #fc5c7d;
+        }
+
+        body.exclusion-mode .master-switch.selected {
+            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
+        }
+
+        body.exclusion-mode button.primary {
+            background: linear-gradient(135deg, #fc5c7d 0%, #d84a68 100%);
+        }
+
+        body.exclusion-mode button.primary:hover {
+            box-shadow: 0 10px 20px rgba(252, 92, 125, 0.4);
+        }
+
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -175,6 +205,14 @@
         .category-header h2 {
             font-size: 20px;
             font-weight: 600;
+        }
+
+        .selection-indicator {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 4px;
         }
 
         .expand-icon {
@@ -379,7 +417,7 @@
             </div>
 
             <div class="selected-categories" id="selectedCategoriesBox">
-                <h3>Your Selections</h3>
+                <h3 id="selectedCategoriesHeader">Your Selections</h3>
                 <div class="selected-chips" id="selectedChips"></div>
             </div>
 
@@ -501,6 +539,13 @@
             const backBtn = document.getElementById('backBtn');
             const continueBtn = document.getElementById('continueBtn');
 
+            // Apply exclusion mode styling for phases 2 and 3
+            if (currentPhase === 2 || currentPhase === 3) {
+                document.body.classList.add('exclusion-mode');
+            } else {
+                document.body.classList.remove('exclusion-mode');
+            }
+
             if (currentPhase === 1) {
                 // Phase 1: Genre Selection
                 stepIndicator.textContent = 'Step 1 of 3';
@@ -555,11 +600,34 @@
                 box.className = 'category-box';
                 box.id = `category-${category}`;
 
+                // Determine selection status for this category
+                const isMasterSelected = masterSwitch && (
+                    currentPhase === 1 ? selectedTags.includes(masterSwitch.slug) : excludedTags.includes(masterSwitch.slug)
+                );
+
+                // Count individual tags selected in this category (not including master switch)
+                const categoryTagsSelected = tags.filter(tag => {
+                    return currentPhase === 1 ? selectedTags.includes(tag.slug) : excludedTags.includes(tag.slug);
+                });
+
+                // Build selection indicator
+                let selectionIndicator = '';
+                if (isMasterSelected) {
+                    const text = currentPhase === 2 ? 'All Excluded!' : 'All Selected!';
+                    selectionIndicator = `<span class="selection-indicator">${text}</span>`;
+                } else if (categoryTagsSelected.length > 0) {
+                    const text = currentPhase === 2 ? `${categoryTagsSelected.length} excluded` : `${categoryTagsSelected.length} selected`;
+                    selectionIndicator = `<span class="selection-indicator">${text}</span>`;
+                }
+
                 const header = document.createElement('div');
                 header.className = 'category-header';
                 header.onclick = () => toggleCategory(category);
                 header.innerHTML = `
-                    <h2>${masterSwitch ? masterSwitch.name.replace('All ', '') : category}</h2>
+                    <div>
+                        <h2>${masterSwitch ? masterSwitch.name.replace('All ', '') : category}</h2>
+                        ${selectionIndicator}
+                    </div>
                     <span class="expand-icon">▼</span>
                 `;
 
@@ -709,20 +777,27 @@
         }
 
         function handleTagChange(slug, checked) {
+            // Update the tag in the appropriate array
             if (currentPhase === 1) {
                 if (checked) {
-                    selectedTags.push(slug);
+                    if (!selectedTags.includes(slug)) {
+                        selectedTags.push(slug);
+                    }
                 } else {
                     selectedTags = selectedTags.filter(t => t !== slug);
                 }
             } else if (currentPhase === 2) {
                 if (checked) {
-                    excludedTags.push(slug);
+                    if (!excludedTags.includes(slug)) {
+                        excludedTags.push(slug);
+                    }
                 } else {
                     excludedTags = excludedTags.filter(t => t !== slug);
                 }
             }
 
+            // Re-render all boxes to sync cross-category tags
+            renderGenreBoxes();
             updateSelectedChips();
         }
 
@@ -738,6 +813,16 @@
         function updateSelectedChips() {
             const chipsContainer = document.getElementById('selectedChips');
             const selectedBox = document.getElementById('selectedCategoriesBox');
+            const headerEl = document.getElementById('selectedCategoriesHeader');
+
+            // Update header text based on phase
+            if (currentPhase === 1) {
+                headerEl.textContent = 'Your Selections';
+            } else if (currentPhase === 2) {
+                headerEl.textContent = 'Your Exclusions (you won\'t see these!)';
+            } else if (currentPhase === 3) {
+                headerEl.textContent = 'Content You\'re Excluding';
+            }
 
             let displayTags = [];
             if (currentPhase === 1) {
