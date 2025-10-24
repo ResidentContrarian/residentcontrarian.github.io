@@ -22,21 +22,19 @@ export default async function handler(req, res) {
     const session = await clerk.sessions.getSession(sessionId);
     const userId = session.userId;
 
-    const { likedTags, excludedTags, comboTags } = req.body;
+    const { selectedTags, excludedTags, excludedContent } = req.body;
 
-    if (!Array.isArray(likedTags)) {
-      return res.status(400).json({ error: 'likedTags must be an array' });
+    if (!Array.isArray(selectedTags)) {
+      return res.status(400).json({ error: 'selectedTags must be an array' });
     }
 
-    // Start a transaction
     // First, clear existing preferences
     await sql`DELETE FROM user_liked_tags WHERE user_id = ${userId}`;
     await sql`DELETE FROM user_excluded_tags WHERE user_id = ${userId}`;
-    await sql`DELETE FROM user_combo_tags WHERE user_id = ${userId}`;
 
-    // Insert liked tags
-    if (likedTags.length > 0) {
-      for (const tagSlug of likedTags) {
+    // Insert selected tags (liked tags)
+    if (selectedTags.length > 0) {
+      for (const tagSlug of selectedTags) {
         const tag = await sql`SELECT id FROM tags WHERE slug = ${tagSlug}`;
         if (tag.length > 0) {
           await sql`
@@ -47,28 +45,15 @@ export default async function handler(req, res) {
       }
     }
 
-    // Insert excluded tags
-    if (excludedTags && excludedTags.length > 0) {
-      for (const tagSlug of excludedTags) {
+    // Insert excluded tags (both genre exclusions and content warnings)
+    const allExclusions = [...(excludedTags || []), ...(excludedContent || [])];
+    if (allExclusions.length > 0) {
+      for (const tagSlug of allExclusions) {
         const tag = await sql`SELECT id FROM tags WHERE slug = ${tagSlug}`;
         if (tag.length > 0) {
           await sql`
             INSERT INTO user_excluded_tags (user_id, tag_id)
             VALUES (${userId}, ${tag[0].id})
-          `;
-        }
-      }
-    }
-
-    // Insert combo tags
-    if (comboTags && comboTags.length > 0) {
-      for (const combo of comboTags) {
-        const tag1 = await sql`SELECT id FROM tags WHERE slug = ${combo.tag1}`;
-        const tag2 = await sql`SELECT id FROM tags WHERE slug = ${combo.tag2}`;
-        if (tag1.length > 0 && tag2.length > 0) {
-          await sql`
-            INSERT INTO user_combo_tags (user_id, tag1_id, tag2_id)
-            VALUES (${userId}, ${tag1[0].id}, ${tag2[0].id})
           `;
         }
       }

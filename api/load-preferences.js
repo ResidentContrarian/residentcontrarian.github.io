@@ -22,38 +22,35 @@ export default async function handler(req, res) {
     const session = await clerk.sessions.getSession(sessionId);
     const userId = session.userId;
 
-    // Load liked tags
-    const likedTagsResult = await sql`
+    // Load selected tags (liked tags)
+    const selectedTagsResult = await sql`
       SELECT t.slug
       FROM user_liked_tags ult
       JOIN tags t ON ult.tag_id = t.id
       WHERE ult.user_id = ${userId}
     `;
-    const likedTags = likedTagsResult.map(row => row.slug);
+    const selectedTags = selectedTagsResult.map(row => row.slug);
 
-    // Load excluded tags
+    // Load excluded tags and separate by type
     const excludedTagsResult = await sql`
-      SELECT t.slug
+      SELECT t.slug, t.tag_type
       FROM user_excluded_tags uet
       JOIN tags t ON uet.tag_id = t.id
       WHERE uet.user_id = ${userId}
     `;
-    const excludedTags = excludedTagsResult.map(row => row.slug);
 
-    // Load combo tags
-    const comboTagsResult = await sql`
-      SELECT t1.slug as tag1, t2.slug as tag2
-      FROM user_combo_tags uct
-      JOIN tags t1 ON uct.tag1_id = t1.id
-      JOIN tags t2 ON uct.tag2_id = t2.id
-      WHERE uct.user_id = ${userId}
-    `;
-    const comboTags = comboTagsResult.map(row => ({ tag1: row.tag1, tag2: row.tag2 }));
+    const excludedTags = excludedTagsResult
+      .filter(row => row.tag_type !== 'content_warning')
+      .map(row => row.slug);
+
+    const excludedContent = excludedTagsResult
+      .filter(row => row.tag_type === 'content_warning')
+      .map(row => row.slug);
 
     res.status(200).json({
-      likedTags,
+      selectedTags,
       excludedTags,
-      comboTags
+      excludedContent
     });
   } catch (error) {
     console.error('API Error:', error);

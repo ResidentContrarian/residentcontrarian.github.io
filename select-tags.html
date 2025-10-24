@@ -456,6 +456,10 @@
 
                 allTags = await response.json();
                 organizeTags();
+
+                // Load saved preferences if available
+                await loadSavedPreferences();
+
                 displayPhase();
 
                 document.getElementById('loadingMessage').style.display = 'none';
@@ -466,6 +470,27 @@
                 const errorEl = document.getElementById('errorMessage');
                 errorEl.textContent = 'Failed to load tags. Please try again.';
                 errorEl.style.display = 'block';
+            }
+        }
+
+        async function loadSavedPreferences() {
+            try {
+                const sessionToken = await Clerk.session.getToken();
+                const response = await fetch('/api/load-preferences', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const prefs = await response.json();
+                    selectedTags = prefs.selectedTags || [];
+                    excludedTags = prefs.excludedTags || [];
+                    excludedContent = prefs.excludedContent || [];
+                }
+            } catch (error) {
+                console.log('No saved preferences found or failed to load:', error);
+                // It's okay if this fails - user can start fresh
             }
         }
 
@@ -903,10 +928,31 @@
         }
 
         async function savePreferencesAndContinue() {
-            // Store preferences in sessionStorage
+            // Store preferences in sessionStorage (for immediate use)
             sessionStorage.setItem('selectedTags', JSON.stringify(selectedTags));
             sessionStorage.setItem('excludedTags', JSON.stringify(excludedTags));
             sessionStorage.setItem('excludedContent', JSON.stringify(excludedContent));
+
+            // Save to database for persistence
+            try {
+                const sessionToken = await Clerk.session.getToken();
+                await fetch('/api/save-preferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionToken}`
+                    },
+                    body: JSON.stringify({
+                        selectedTags,
+                        excludedTags,
+                        excludedContent
+                    })
+                });
+                // Don't wait for response, just continue
+            } catch (error) {
+                console.error('Failed to save preferences:', error);
+                // Continue anyway - sessionStorage will work for this session
+            }
 
             // Navigate to recommendations
             window.location.href = 'recommendations.html';
