@@ -1,40 +1,24 @@
 import { getRecommendationsByTags } from '../lib/db.js';
 
-export const config = {
-  runtime: 'edge',
-};
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Content-Type', 'application/json');
 
-export default async function handler(request) {
   try {
-    const url = new URL(request.url);
-    const tagsParam = url.searchParams.get('tags');
+    const tagsParam = req.query.tags;
 
     if (!tagsParam) {
-      return new Response(JSON.stringify({ error: 'Tags parameter required' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      return res.status(400).json({ error: 'Tags parameter required' });
     }
 
     const tagSlugs = tagsParam.split(',');
     const recommendations = await getRecommendationsByTags(tagSlugs);
 
-    return new Response(JSON.stringify(recommendations), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    res.status(200).json(recommendations);
   } catch (error) {
     console.error('API Error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch recommendations' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    res.status(500).json({ error: 'Failed to fetch recommendations', details: error.message });
   }
 }

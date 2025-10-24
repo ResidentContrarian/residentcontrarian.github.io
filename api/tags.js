@@ -1,27 +1,16 @@
 import { getAllTags } from '../lib/db.js';
 
-export const config = {
-  runtime: 'edge',
-};
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Content-Type', 'application/json');
 
-export default async function handler(request) {
   try {
     const tags = await getAllTags();
-
-    return new Response(JSON.stringify(tags), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    res.status(200).json(tags);
   } catch (error) {
     console.error('API Error:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch tags' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    res.status(500).json({ error: 'Failed to fetch tags', details: error.message });
   }
 }
