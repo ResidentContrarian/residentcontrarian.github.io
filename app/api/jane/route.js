@@ -27,7 +27,6 @@ async function findUserByUsername(username) {
   return rows[0] || null;
 }
 
-/** Recommend stories by provided tag slugs or names. */
 async function getRecommendationsByTags({ tagSlugsOrNames = [], limit = 12 }) {
   const tags = (tagSlugsOrNames || [])
     .map(t => String(t || '').trim().toLowerCase())
@@ -79,7 +78,6 @@ async function getRecommendationsByTags({ tagSlugsOrNames = [], limit = 12 }) {
     `;
   }
 
-  // Fallback: no tags resolved → top-by-followers
   return sql/*sql*/`
     select
       s.id,
@@ -107,7 +105,6 @@ async function handle(payload) {
   const user = name ? await findUserByUsername(name) : null;
   const recs = await getRecommendationsByTags({ tagSlugsOrNames: tags, limit: 12 });
 
-  // Echo resolved tag slugs/names
   let resolvedTags = [];
   if (tags.length) {
     const rows = await sql/*sql*/`
