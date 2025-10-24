@@ -17,23 +17,24 @@ async function handle(payload) {
   const name = (payload.name || payload.username || '').trim();
   const tags = parseList(payload.tags);
 
-  // Try to resolve a user
   const user = name ? await findUserByUsername(name) : null;
 
-  // Recommendations
+  // Recs
   const recs = await getRecommendationsByTags({ tagSlugsOrNames: tags, limit: 12 });
 
-  // Echo back resolved tags
+  // Echo back the resolved tag slugs/names (no ANY; use join-on-unnest)
   let resolvedTags = [];
   if (tags.length) {
     const rows = await sql/*sql*/`
-      select name, slug
-      from tags
-      where lower(slug) = any(${sql.array(tags, 'text')})
-         or lower(name) = any(${sql.array(tags, 'text')})
-      order by slug nulls last, name
+      with q as (
+        select unnest(${sql.array(tags, 'text')}) as q
+      )
+      select distinct coalesce(t.slug, t.name) as tag
+      from tags t
+      join q on lower(t.slug) = q.q or lower(t.name) = q.q
+      order by tag
     `;
-    resolvedTags = rows.map(r => r.slug || r.name);
+    resolvedTags = rows.map(r => r.tag);
   }
 
   return NextResponse.json({
