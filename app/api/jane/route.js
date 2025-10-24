@@ -1,5 +1,5 @@
 // app/api/jane/route.js
-export const runtime = 'nodejs'; // safer for Neon; switch to 'edge' later if you want
+export const runtime = 'nodejs';
 
 import { NextResponse } from 'next/server';
 import { sql, findUserByUsername, getRecommendationsByTags } from '../../../lib/db';
@@ -17,13 +17,13 @@ async function handle(payload) {
   const name = (payload.name || payload.username || '').trim();
   const tags = parseList(payload.tags);
 
-  // Optional: try to resolve a user (no creation)
+  // Try to resolve a user
   const user = name ? await findUserByUsername(name) : null;
 
-  // Recs by provided tags; fallback to top-by-followers
+  // Recommendations
   const recs = await getRecommendationsByTags({ tagSlugsOrNames: tags, limit: 12 });
 
-  // Echo resolved tag slugs/names (for UI)
+  // Echo back resolved tags
   let resolvedTags = [];
   if (tags.length) {
     const rows = await sql/*sql*/`
@@ -54,4 +54,6 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const body = awai
+  const body = await req.json().catch(() => ({}));
+  return handle(body || {});
+}
