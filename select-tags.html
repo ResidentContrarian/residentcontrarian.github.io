@@ -523,7 +523,9 @@
 
                 renderGenreBoxes();
             } else if (currentPhase === 2) {
-                // Phase 2: Genre Exclusions
+                // Phase 2: Genre Exclusions - clear collapsed state so all boxes are open
+                collapsedCategories.clear();
+
                 stepIndicator.textContent = 'Step 2 of 3';
                 phaseTitle.textContent = 'Exclude Genres (Optional)';
                 phaseInstruction.textContent = 'Select genres or sub-genres to exclude. These will NEVER show up, even if they match your liked tags.';
@@ -533,7 +535,9 @@
 
                 renderGenreBoxes();
             } else if (currentPhase === 3) {
-                // Phase 3: Content Exclusions
+                // Phase 3: Content Exclusions - clear collapsed state
+                collapsedCategories.clear();
+
                 stepIndicator.textContent = 'Step 3 of 3';
                 phaseTitle.textContent = 'Content Filters (Optional)';
                 phaseInstruction.textContent = 'Exclude content you prefer not to see, like graphic violence or explicit content.';
@@ -678,21 +682,31 @@
             const grid = document.createElement('div');
             grid.className = 'sub-genres';
 
-            contentWarnings.forEach(tag => {
-                const isSelected = excludedContent.includes(tag.slug);
-
-                const tagOption = document.createElement('div');
-                tagOption.className = 'tag-option';
-                tagOption.innerHTML = `
-                    <input type="checkbox"
-                           id="tag-${tag.slug}"
-                           value="${tag.slug}"
-                           ${isSelected ? 'checked' : ''}
-                           onchange="handleContentWarning('${tag.slug}', this.checked)">
-                    <label for="tag-${tag.slug}">${tag.name}</label>
+            if (contentWarnings.length === 0) {
+                // Show a message if no content warnings are found
+                grid.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #666;">
+                        <p style="margin-bottom: 10px;">No content warning tags found in database.</p>
+                        <p style="font-size: 14px;">Run the <code>tag-taxonomy-migration.sql</code> migration to add content warning tags.</p>
+                    </div>
                 `;
-                grid.appendChild(tagOption);
-            });
+            } else {
+                contentWarnings.forEach(tag => {
+                    const isSelected = excludedContent.includes(tag.slug);
+
+                    const tagOption = document.createElement('div');
+                    tagOption.className = 'tag-option';
+                    tagOption.innerHTML = `
+                        <input type="checkbox"
+                               id="tag-${tag.slug}"
+                               value="${tag.slug}"
+                               ${isSelected ? 'checked' : ''}
+                               onchange="handleContentWarning('${tag.slug}', this.checked)">
+                        <label for="tag-${tag.slug}">${tag.name}</label>
+                    `;
+                    grid.appendChild(tagOption);
+                });
+            }
 
             content.appendChild(grid);
             box.appendChild(header);
