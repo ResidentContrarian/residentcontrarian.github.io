@@ -16,112 +16,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            gap: 20px;
         }
 
-        .main-area {
-            flex: 1;
-            background: white;
-            border-radius: 20px;
-            padding: 60px 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
-        }
-
-        .sidebar {
-            width: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .sidebar-box {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            min-height: 120px;
-        }
-
-        .sidebar-box h3 {
-            color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .sidebar-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            min-height: 50px;
-        }
-
-        .sidebar-tag {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .sidebar-tag .remove-btn {
-            background: rgba(255,255,255,0.3);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 1;
-            padding: 0;
-        }
-
-        .sidebar-tag .remove-btn:hover {
-            background: rgba(255,255,255,0.5);
-        }
-
-        .excluded-tag {
-            background: linear-gradient(135deg, #fc5c7d 0%, #6a82fb 100%);
-        }
-
-        .combo-tag {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .combo-separator {
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        .empty-message {
-            color: #999;
-            font-style: italic;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px 0;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .user-menu {
@@ -149,54 +48,195 @@
             background: #e8e8e8;
         }
 
-        h1 {
-            color: #333;
-            font-size: 32px;
-            margin-bottom: 10px;
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
-        }
-
-        .instruction {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-            line-height: 1.6;
-            text-align: center;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 10px;
         }
 
         .step-indicator {
             color: #999;
             font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 10px;
         }
 
-        .loading {
-            text-align: center;
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .instruction {
             color: #666;
-            padding: 40px;
+            font-size: 16px;
+            line-height: 1.6;
         }
 
-        .error {
-            background: #fee;
-            color: #c33;
+        .selected-categories {
+            background: white;
+            border-radius: 20px;
             padding: 20px;
-            border-radius: 10px;
             margin-bottom: 20px;
-            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-height: 80px;
+            display: none;
         }
 
-        .tags-grid {
+        .selected-categories.has-selections {
+            display: block;
+        }
+
+        .selected-categories h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .selected-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .selected-chip {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .selected-chip .remove-btn {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .selected-chip .remove-btn:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .category-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .category-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .category-box.collapsed {
+            max-height: 70px;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .category-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .expand-icon {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .category-box.collapsed .expand-icon {
+            transform: rotate(-90deg);
+        }
+
+        .category-content {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .category-box.collapsed .category-content {
+            display: none;
+        }
+
+        .master-switch {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .master-switch:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .master-switch.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .master-switch input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .master-switch label {
+            flex: 1;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .sub-genres {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            margin-bottom: 30px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
+            gap: 10px;
         }
 
         .tag-option {
@@ -227,12 +267,37 @@
             border-color: #667eea;
         }
 
-        .tag-option label:hover {
+        .tag-option label:hover:not(.disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        .tag-option.disabled label {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #e8e8e8;
+        }
+
+        .tag-option.disabled input[type="checkbox"] {
+            pointer-events: none;
+        }
+
+        .cross-category-badge {
+            display: inline-block;
+            background: #f093fb;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-weight: 600;
+        }
+
         .action-buttons {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             display: flex;
             gap: 15px;
             justify-content: center;
@@ -277,88 +342,20 @@
             cursor: not-allowed;
         }
 
-        #comboInterface {
-            margin-top: 30px;
+        .loading {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            font-size: 18px;
         }
 
-        .combo-builder {
-            background: #f9f9f9;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .combo-builder h4 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .combo-selects {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        select {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .combo-plus {
-            font-weight: bold;
-            color: #667eea;
-            font-size: 20px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
+        .error {
             background: white;
             border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-content h3 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .modal-content p {
-            color: #666;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .modal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .modal-buttons button {
-            width: 100%;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            color: #c33;
+            text-align: center;
         }
     </style>
 </head>
@@ -368,79 +365,30 @@
         <button class="sign-out-btn" onclick="handleSignOut()">Sign Out</button>
     </div>
 
-    <div class="main-area">
-        <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
-        <h1 id="phaseTitle">Select Tags You Like</h1>
-        <div class="instruction" id="phaseInstruction">
-            Hello! First, let's figure out what tags you like. Select as many as you want.
-        </div>
-
+    <div class="container">
         <div id="loadingMessage" class="loading">Loading tags...</div>
         <div id="errorMessage" class="error" style="display: none;"></div>
 
         <div id="mainContent" style="display: none;">
-            <div class="tags-grid" id="tagsGrid"></div>
-
-            <div id="comboInterface" style="display: none;">
-                <div class="combo-builder">
-                    <h4>Create a Combination Tag</h4>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
-                        Select two tags from your liked tags to combine them. We'll only show stories that have BOTH tags.
-                    </p>
-                    <div class="combo-selects">
-                        <select id="comboTag1">
-                            <option value="">Select first tag...</option>
-                        </select>
-                        <span class="combo-plus">+</span>
-                        <select id="comboTag2">
-                            <option value="">Select second tag...</option>
-                        </select>
-                    </div>
-                    <button class="primary" onclick="createCombo()">Create Combination</button>
-                </div>
+            <div class="header">
+                <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
+                <h1 id="phaseTitle">Select Genres You Like</h1>
+                <p class="instruction" id="phaseInstruction">
+                    Select entire genres using "All [Genre]" or pick specific sub-genres. Cross-genre tags appear in multiple boxes.
+                </p>
             </div>
+
+            <div class="selected-categories" id="selectedCategoriesBox">
+                <h3>Your Selections</h3>
+                <div class="selected-chips" id="selectedChips"></div>
+            </div>
+
+            <div class="category-boxes" id="categoryBoxes"></div>
 
             <div class="action-buttons">
                 <button type="button" class="secondary" onclick="goBack()" id="backBtn" style="display: none;">Back</button>
                 <button type="button" class="secondary" onclick="skipPhase()" id="skipBtn" style="display: none;">Skip</button>
                 <button type="button" class="primary" onclick="continueToNext()" id="continueBtn">Continue</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="sidebar">
-        <div class="sidebar-box">
-            <h3>Tags You Like</h3>
-            <div class="sidebar-tags" id="likedTagsSidebar">
-                <div class="empty-message">No tags selected yet</div>
-            </div>
-        </div>
-
-        <div class="sidebar-box">
-            <h3>Tags to Exclude</h3>
-            <div class="sidebar-tags" id="excludedTagsSidebar">
-                <div class="empty-message">No exclusions</div>
-            </div>
-        </div>
-
-        <div class="sidebar-box">
-            <h3>Combination Tags</h3>
-            <div class="sidebar-tags" id="comboTagsSidebar">
-                <div class="empty-message">No combinations</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for combo tag confirmation -->
-    <div class="modal" id="comboModal">
-        <div class="modal-content">
-            <h3>Keep Individual Tags?</h3>
-            <p id="modalQuestion"></p>
-            <div class="modal-buttons">
-                <button class="primary" onclick="handleComboChoice('both')">Keep both individual tags</button>
-                <button class="secondary" onclick="handleComboChoice('first')">Remove <span id="firstTag"></span></button>
-                <button class="secondary" onclick="handleComboChoice('second')">Remove <span id="secondTag"></span></button>
-                <button class="secondary" onclick="handleComboChoice('neither')">Only show the combination</button>
             </div>
         </div>
     </div>
@@ -456,11 +404,17 @@
     <script>
         let currentUser = null;
         let allTags = [];
-        let currentPhase = 1; // 1 = liked, 2 = excluded, 3 = combo
-        let likedTags = [];
-        let excludedTags = [];
-        let comboTags = [];
-        let pendingCombo = null;
+        let currentPhase = 1; // 1 = genre selection, 2 = genre exclusions, 3 = content exclusions
+
+        // Data structure for selections
+        let selectedTags = []; // Array of tag slugs
+        let excludedTags = []; // Array of tag slugs (used in phase 2)
+        let excludedContent = []; // Array of content warning slugs (used in phase 3)
+
+        // Cache for organizing tags by category
+        let tagsByCategory = {};
+        let masterSwitches = {};
+        let contentWarnings = [];
 
         window.addEventListener("load", async function () {
             await Clerk.load();
@@ -490,122 +444,363 @@
                 }
 
                 allTags = await response.json();
-                displayTagsForPhase();
+                organizeTags();
+                displayPhase();
+
                 document.getElementById('loadingMessage').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             } catch (error) {
                 console.error('Error loading tags:', error);
                 document.getElementById('loadingMessage').style.display = 'none';
-                document.getElementById('errorMessage').textContent = 'Failed to load tags. Please try again.';
-                document.getElementById('errorMessage').style.display = 'block';
+                const errorEl = document.getElementById('errorMessage');
+                errorEl.textContent = 'Failed to load tags. Please try again.';
+                errorEl.style.display = 'block';
             }
         }
 
-        function displayTagsForPhase() {
-            const tagsGrid = document.getElementById('tagsGrid');
+        function organizeTags() {
+            // Organize tags by category and type
+            tagsByCategory = {};
+            masterSwitches = {};
+            contentWarnings = [];
+
+            allTags.forEach(tag => {
+                if (tag.tag_type === 'content_warning') {
+                    contentWarnings.push(tag);
+                    return;
+                }
+
+                if (tag.is_master_switch) {
+                    const category = tag.categories[0];
+                    masterSwitches[category] = tag;
+                    if (!tagsByCategory[category]) {
+                        tagsByCategory[category] = [];
+                    }
+                } else {
+                    // Add tag to all its categories
+                    tag.categories.forEach(category => {
+                        if (!tagsByCategory[category]) {
+                            tagsByCategory[category] = [];
+                        }
+                        tagsByCategory[category].push(tag);
+                    });
+                }
+            });
+
+            // Sort tags within each category by display_order
+            Object.keys(tagsByCategory).forEach(category => {
+                tagsByCategory[category].sort((a, b) => a.display_order - b.display_order);
+            });
+        }
+
+        function displayPhase() {
             const stepIndicator = document.getElementById('stepIndicator');
             const phaseTitle = document.getElementById('phaseTitle');
             const phaseInstruction = document.getElementById('phaseInstruction');
             const skipBtn = document.getElementById('skipBtn');
             const backBtn = document.getElementById('backBtn');
-            const comboInterface = document.getElementById('comboInterface');
-
-            tagsGrid.innerHTML = '';
-            comboInterface.style.display = 'none';
+            const continueBtn = document.getElementById('continueBtn');
 
             if (currentPhase === 1) {
+                // Phase 1: Genre Selection
                 stepIndicator.textContent = 'Step 1 of 3';
-                phaseTitle.textContent = 'Select Tags You Like';
-                phaseInstruction.textContent = "Hello! First, let's figure out what tags you like. Select as many as you want.";
+                phaseTitle.textContent = 'Select Genres You Like';
+                phaseInstruction.textContent = 'Select entire genres using "All [Genre]" or pick specific sub-genres. Cross-genre tags appear in multiple boxes.';
                 skipBtn.style.display = 'none';
                 backBtn.style.display = 'none';
+                continueBtn.textContent = 'Continue';
 
-                allTags.forEach(tag => {
-                    const isChecked = likedTags.includes(tag.slug);
-                    const tagOption = document.createElement('div');
-                    tagOption.className = 'tag-option';
-                    tagOption.innerHTML = `
-                        <input type="checkbox" id="tag-${tag.slug}" value="${tag.slug}" ${isChecked ? 'checked' : ''}>
-                        <label for="tag-${tag.slug}">${tag.name}</label>
-                    `;
-                    tagsGrid.appendChild(tagOption);
-                });
-
+                renderGenreBoxes();
             } else if (currentPhase === 2) {
+                // Phase 2: Genre Exclusions
                 stepIndicator.textContent = 'Step 2 of 3';
-                phaseTitle.textContent = 'Tags to Exclude';
-                phaseInstruction.textContent = "We'll show you stories with the tags you selected. Now pick any tags you want to exclude, and we'll make sure stories with those tags never show up in your feed even if they contain a tag you do like.";
+                phaseTitle.textContent = 'Exclude Genres (Optional)';
+                phaseInstruction.textContent = 'Select genres or sub-genres to exclude. These will NEVER show up, even if they match your liked tags.';
                 skipBtn.style.display = 'inline-block';
                 backBtn.style.display = 'inline-block';
+                continueBtn.textContent = 'Continue';
 
-                allTags.forEach(tag => {
-                    if (likedTags.includes(tag.slug)) return; // Don't show already liked tags
-                    const isChecked = excludedTags.includes(tag.slug);
-                    const tagOption = document.createElement('div');
-                    tagOption.className = 'tag-option';
-                    tagOption.innerHTML = `
-                        <input type="checkbox" id="tag-${tag.slug}" value="${tag.slug}" ${isChecked ? 'checked' : ''}>
-                        <label for="tag-${tag.slug}">${tag.name}</label>
-                    `;
-                    tagsGrid.appendChild(tagOption);
-                });
-
+                renderGenreBoxes();
             } else if (currentPhase === 3) {
+                // Phase 3: Content Exclusions
                 stepIndicator.textContent = 'Step 3 of 3';
-                phaseTitle.textContent = 'Combination Tags (Optional)';
-                phaseInstruction.innerHTML = "You can skip this step if you want, but combination tags are things like \"cozy fantasy\". If you combine two tags in the combination box, we'll only show you stories that have both tags. You'd do this if you wanted, say, military sci-fi, but not military stories or sci-fi stories in general.";
+                phaseTitle.textContent = 'Content Filters (Optional)';
+                phaseInstruction.textContent = 'Exclude content you prefer not to see, like graphic violence or explicit content.';
                 skipBtn.style.display = 'inline-block';
                 backBtn.style.display = 'inline-block';
-                comboInterface.style.display = 'block';
-                document.getElementById('continueBtn').textContent = 'Get Recommendations';
+                continueBtn.textContent = 'Get Recommendations';
 
-                // Populate combo selects
-                updateComboSelects();
+                renderContentWarnings();
             }
+
+            updateSelectedChips();
         }
 
-        function updateComboSelects() {
-            const select1 = document.getElementById('comboTag1');
-            const select2 = document.getElementById('comboTag2');
+        function renderGenreBoxes() {
+            const container = document.getElementById('categoryBoxes');
+            container.innerHTML = '';
 
-            select1.innerHTML = '<option value="">Select first tag...</option>';
-            select2.innerHTML = '<option value="">Select second tag...</option>';
+            // Get categories sorted by display_order of their master switches
+            const categories = Object.keys(tagsByCategory).sort((a, b) => {
+                const orderA = masterSwitches[a]?.display_order || 999;
+                const orderB = masterSwitches[b]?.display_order || 999;
+                return orderA - orderB;
+            });
 
-            likedTags.forEach(tagSlug => {
-                const tag = allTags.find(t => t.slug === tagSlug);
+            categories.forEach(category => {
+                const masterSwitch = masterSwitches[category];
+                const tags = tagsByCategory[category];
+
+                const box = document.createElement('div');
+                box.className = 'category-box';
+                box.id = `category-${category}`;
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.onclick = () => toggleCategory(category);
+                header.innerHTML = `
+                    <h2>${masterSwitch ? masterSwitch.name.replace('All ', '') : category}</h2>
+                    <span class="expand-icon">▼</span>
+                `;
+
+                const content = document.createElement('div');
+                content.className = 'category-content';
+
+                // Master switch
+                if (masterSwitch) {
+                    const isSelected = currentPhase === 1
+                        ? selectedTags.includes(masterSwitch.slug)
+                        : excludedTags.includes(masterSwitch.slug);
+
+                    const masterDiv = document.createElement('div');
+                    masterDiv.className = `master-switch ${isSelected ? 'selected' : ''}`;
+                    masterDiv.innerHTML = `
+                        <input type="checkbox"
+                               id="tag-${masterSwitch.slug}"
+                               value="${masterSwitch.slug}"
+                               ${isSelected ? 'checked' : ''}
+                               onchange="handleMasterSwitch('${category}', '${masterSwitch.slug}', this.checked)">
+                        <label for="tag-${masterSwitch.slug}">${masterSwitch.name}</label>
+                    `;
+                    content.appendChild(masterDiv);
+                }
+
+                // Sub-genres
+                const subGenresDiv = document.createElement('div');
+                subGenresDiv.className = 'sub-genres';
+
+                tags.forEach(tag => {
+                    const isSelected = currentPhase === 1
+                        ? selectedTags.includes(tag.slug)
+                        : excludedTags.includes(tag.slug);
+                    const isDisabled = shouldTagBeDisabled(tag);
+                    const isCrossCategory = tag.categories.length > 1;
+
+                    const tagOption = document.createElement('div');
+                    tagOption.className = `tag-option ${isDisabled ? 'disabled' : ''}`;
+                    tagOption.innerHTML = `
+                        <input type="checkbox"
+                               id="tag-${tag.slug}"
+                               value="${tag.slug}"
+                               ${isSelected ? 'checked' : ''}
+                               ${isDisabled ? 'disabled' : ''}
+                               onchange="handleTagChange('${tag.slug}', this.checked)">
+                        <label for="tag-${tag.slug}" class="${isDisabled ? 'disabled' : ''}">
+                            ${tag.name}
+                            ${isCrossCategory ? '<span class="cross-category-badge">COMBO</span>' : ''}
+                        </label>
+                    `;
+                    subGenresDiv.appendChild(tagOption);
+                });
+
+                content.appendChild(subGenresDiv);
+                box.appendChild(header);
+                box.appendChild(content);
+                container.appendChild(box);
+            });
+        }
+
+        function renderContentWarnings() {
+            const container = document.getElementById('categoryBoxes');
+            container.innerHTML = '';
+
+            const box = document.createElement('div');
+            box.className = 'category-box';
+
+            const header = document.createElement('div');
+            header.className = 'category-header';
+            header.innerHTML = `
+                <h2>Content Warnings</h2>
+            `;
+
+            const content = document.createElement('div');
+            content.className = 'category-content';
+
+            const grid = document.createElement('div');
+            grid.className = 'sub-genres';
+
+            contentWarnings.forEach(tag => {
+                const isSelected = excludedContent.includes(tag.slug);
+
+                const tagOption = document.createElement('div');
+                tagOption.className = 'tag-option';
+                tagOption.innerHTML = `
+                    <input type="checkbox"
+                           id="tag-${tag.slug}"
+                           value="${tag.slug}"
+                           ${isSelected ? 'checked' : ''}
+                           onchange="handleContentWarning('${tag.slug}', this.checked)">
+                    <label for="tag-${tag.slug}">${tag.name}</label>
+                `;
+                grid.appendChild(tagOption);
+            });
+
+            content.appendChild(grid);
+            box.appendChild(header);
+            box.appendChild(content);
+            container.appendChild(box);
+        }
+
+        function shouldTagBeDisabled(tag) {
+            // Check if any of the tag's categories have their master switch selected
+            // which should gray out this tag
+            if (currentPhase === 1) {
+                // In selection mode, master switches gray out child tags
+                return tag.categories.some(category => {
+                    const masterSwitch = masterSwitches[category];
+                    return masterSwitch && selectedTags.includes(masterSwitch.slug);
+                });
+            } else if (currentPhase === 2) {
+                // In exclusion mode, same logic applies
+                return tag.categories.some(category => {
+                    const masterSwitch = masterSwitches[category];
+                    return masterSwitch && excludedTags.includes(masterSwitch.slug);
+                });
+            }
+            return false;
+        }
+
+        function toggleCategory(category) {
+            const box = document.getElementById(`category-${category}`);
+            box.classList.toggle('collapsed');
+        }
+
+        function handleMasterSwitch(category, slug, checked) {
+            if (currentPhase === 1) {
+                if (checked) {
+                    selectedTags.push(slug);
+                    // Auto-collapse this category
+                    setTimeout(() => toggleCategory(category), 300);
+                } else {
+                    selectedTags = selectedTags.filter(t => t !== slug);
+                }
+            } else if (currentPhase === 2) {
+                if (checked) {
+                    excludedTags.push(slug);
+                    setTimeout(() => toggleCategory(category), 300);
+                } else {
+                    excludedTags = excludedTags.filter(t => t !== slug);
+                }
+            }
+
+            // Re-render to update disabled states
+            renderGenreBoxes();
+            updateSelectedChips();
+        }
+
+        function handleTagChange(slug, checked) {
+            if (currentPhase === 1) {
+                if (checked) {
+                    selectedTags.push(slug);
+                } else {
+                    selectedTags = selectedTags.filter(t => t !== slug);
+                }
+            } else if (currentPhase === 2) {
+                if (checked) {
+                    excludedTags.push(slug);
+                } else {
+                    excludedTags = excludedTags.filter(t => t !== slug);
+                }
+            }
+
+            updateSelectedChips();
+        }
+
+        function handleContentWarning(slug, checked) {
+            if (checked) {
+                excludedContent.push(slug);
+            } else {
+                excludedContent = excludedContent.filter(t => t !== slug);
+            }
+            updateSelectedChips();
+        }
+
+        function updateSelectedChips() {
+            const chipsContainer = document.getElementById('selectedChips');
+            const selectedBox = document.getElementById('selectedCategoriesBox');
+
+            let displayTags = [];
+            if (currentPhase === 1) {
+                displayTags = selectedTags;
+            } else if (currentPhase === 2) {
+                displayTags = excludedTags;
+            } else if (currentPhase === 3) {
+                displayTags = excludedContent;
+            }
+
+            if (displayTags.length === 0) {
+                selectedBox.classList.remove('has-selections');
+                return;
+            }
+
+            selectedBox.classList.add('has-selections');
+            chipsContainer.innerHTML = '';
+
+            displayTags.forEach(slug => {
+                const tag = allTags.find(t => t.slug === slug);
                 if (tag) {
-                    select1.innerHTML += `<option value="${tag.slug}">${tag.name}</option>`;
-                    select2.innerHTML += `<option value="${tag.slug}">${tag.name}</option>`;
+                    const chip = document.createElement('div');
+                    chip.className = 'selected-chip';
+                    chip.innerHTML = `
+                        <span>${tag.name}</span>
+                        <button class="remove-btn" onclick="removeSelection('${slug}')">×</button>
+                    `;
+                    chipsContainer.appendChild(chip);
                 }
             });
         }
 
+        function removeSelection(slug) {
+            if (currentPhase === 1) {
+                selectedTags = selectedTags.filter(t => t !== slug);
+                const checkbox = document.getElementById(`tag-${slug}`);
+                if (checkbox) checkbox.checked = false;
+                renderGenreBoxes();
+            } else if (currentPhase === 2) {
+                excludedTags = excludedTags.filter(t => t !== slug);
+                const checkbox = document.getElementById(`tag-${slug}`);
+                if (checkbox) checkbox.checked = false;
+                renderGenreBoxes();
+            } else if (currentPhase === 3) {
+                excludedContent = excludedContent.filter(t => t !== slug);
+                const checkbox = document.getElementById(`tag-${slug}`);
+                if (checkbox) checkbox.checked = false;
+            }
+            updateSelectedChips();
+        }
+
         function continueToNext() {
             if (currentPhase === 1) {
-                // Collect liked tags
-                const checked = document.querySelectorAll('#tagsGrid input[type="checkbox"]:checked');
-                likedTags = Array.from(checked).map(cb => cb.value);
-
-                if (likedTags.length === 0) {
-                    alert('Please select at least one tag you like!');
+                if (selectedTags.length === 0) {
+                    alert('Please select at least one genre or sub-genre!');
                     return;
                 }
-
-                updateSidebar('liked');
                 currentPhase = 2;
-                displayTagsForPhase();
-
+                displayPhase();
             } else if (currentPhase === 2) {
-                // Collect excluded tags
-                const checked = document.querySelectorAll('#tagsGrid input[type="checkbox"]:checked');
-                excludedTags = Array.from(checked).map(cb => cb.value);
-
-                updateSidebar('excluded');
                 currentPhase = 3;
-                displayTagsForPhase();
-
+                displayPhase();
             } else if (currentPhase === 3) {
-                // Save preferences and go to recommendations
                 savePreferencesAndContinue();
             }
         }
@@ -613,180 +808,29 @@
         function goBack() {
             if (currentPhase === 2) {
                 currentPhase = 1;
-                displayTagsForPhase();
+                displayPhase();
             } else if (currentPhase === 3) {
                 currentPhase = 2;
-                displayTagsForPhase();
+                displayPhase();
             }
         }
 
         function skipPhase() {
             if (currentPhase === 2) {
                 excludedTags = [];
-                updateSidebar('excluded');
                 currentPhase = 3;
-                displayTagsForPhase();
+                displayPhase();
             } else if (currentPhase === 3) {
+                excludedContent = [];
                 savePreferencesAndContinue();
             }
         }
 
-        function updateSidebar(type) {
-            if (type === 'liked') {
-                const sidebar = document.getElementById('likedTagsSidebar');
-                sidebar.innerHTML = '';
-                if (likedTags.length === 0) {
-                    sidebar.innerHTML = '<div class="empty-message">No tags selected yet</div>';
-                } else {
-                    likedTags.forEach(tagSlug => {
-                        const tag = allTags.find(t => t.slug === tagSlug);
-                        if (tag) {
-                            const tagEl = document.createElement('div');
-                            tagEl.className = 'sidebar-tag';
-                            tagEl.innerHTML = `
-                                <span>${tag.name}</span>
-                                <button class="remove-btn" onclick="removeTag('liked', '${tagSlug}')">×</button>
-                            `;
-                            sidebar.appendChild(tagEl);
-                        }
-                    });
-                }
-            } else if (type === 'excluded') {
-                const sidebar = document.getElementById('excludedTagsSidebar');
-                sidebar.innerHTML = '';
-                if (excludedTags.length === 0) {
-                    sidebar.innerHTML = '<div class="empty-message">No exclusions</div>';
-                } else {
-                    excludedTags.forEach(tagSlug => {
-                        const tag = allTags.find(t => t.slug === tagSlug);
-                        if (tag) {
-                            const tagEl = document.createElement('div');
-                            tagEl.className = 'sidebar-tag excluded-tag';
-                            tagEl.innerHTML = `
-                                <span>${tag.name}</span>
-                                <button class="remove-btn" onclick="removeTag('excluded', '${tagSlug}')">×</button>
-                            `;
-                            sidebar.appendChild(tagEl);
-                        }
-                    });
-                }
-            } else if (type === 'combo') {
-                const sidebar = document.getElementById('comboTagsSidebar');
-                sidebar.innerHTML = '';
-                if (comboTags.length === 0) {
-                    sidebar.innerHTML = '<div class="empty-message">No combinations</div>';
-                } else {
-                    comboTags.forEach((combo, index) => {
-                        const tag1 = allTags.find(t => t.slug === combo.tag1);
-                        const tag2 = allTags.find(t => t.slug === combo.tag2);
-                        if (tag1 && tag2) {
-                            const tagEl = document.createElement('div');
-                            tagEl.className = 'sidebar-tag combo-tag';
-                            tagEl.innerHTML = `
-                                <span>${tag1.name}</span>
-                                <span class="combo-separator">+</span>
-                                <span>${tag2.name}</span>
-                                <button class="remove-btn" onclick="removeCombo(${index})">×</button>
-                            `;
-                            sidebar.appendChild(tagEl);
-                        }
-                    });
-                }
-            }
-        }
-
-        function removeTag(type, tagSlug) {
-            if (type === 'liked') {
-                likedTags = likedTags.filter(t => t !== tagSlug);
-                updateSidebar('liked');
-                if (currentPhase === 1) displayTagsForPhase();
-            } else if (type === 'excluded') {
-                excludedTags = excludedTags.filter(t => t !== tagSlug);
-                updateSidebar('excluded');
-                if (currentPhase === 2) displayTagsForPhase();
-            }
-        }
-
-        function removeCombo(index) {
-            comboTags.splice(index, 1);
-            updateSidebar('combo');
-            updateComboSelects();
-        }
-
-        function createCombo() {
-            const tag1 = document.getElementById('comboTag1').value;
-            const tag2 = document.getElementById('comboTag2').value;
-
-            if (!tag1 || !tag2) {
-                alert('Please select two tags to combine');
-                return;
-            }
-
-            if (tag1 === tag2) {
-                alert('Please select two different tags');
-                return;
-            }
-
-            // Check if this combo already exists
-            const exists = comboTags.some(c =>
-                (c.tag1 === tag1 && c.tag2 === tag2) || (c.tag1 === tag2 && c.tag2 === tag1)
-            );
-
-            if (exists) {
-                alert('This combination already exists');
-                return;
-            }
-
-            // Show modal to ask about keeping individual tags
-            pendingCombo = { tag1, tag2 };
-            const tag1Name = allTags.find(t => t.slug === tag1)?.name;
-            const tag2Name = allTags.find(t => t.slug === tag2)?.name;
-
-            document.getElementById('modalQuestion').textContent =
-                `Do you still want to see stories with ONLY "${tag1Name}" or ONLY "${tag2Name}"? Or just the combination?`;
-            document.getElementById('firstTag').textContent = tag1Name;
-            document.getElementById('secondTag').textContent = tag2Name;
-            document.getElementById('comboModal').classList.add('active');
-        }
-
-        function handleComboChoice(choice) {
-            if (!pendingCombo) return;
-
-            comboTags.push(pendingCombo);
-
-            if (choice === 'neither') {
-                // Remove both from liked tags
-                likedTags = likedTags.filter(t => t !== pendingCombo.tag1 && t !== pendingCombo.tag2);
-                updateSidebar('liked');
-            } else if (choice === 'first') {
-                // Remove first tag from liked
-                likedTags = likedTags.filter(t => t !== pendingCombo.tag1);
-                updateSidebar('liked');
-            } else if (choice === 'second') {
-                // Remove second tag from liked
-                likedTags = likedTags.filter(t => t !== pendingCombo.tag2);
-                updateSidebar('liked');
-            }
-            // 'both' means keep both - do nothing
-
-            updateSidebar('combo');
-            updateComboSelects();
-
-            // Reset combo selects
-            document.getElementById('comboTag1').value = '';
-            document.getElementById('comboTag2').value = '';
-
-            // Close modal
-            document.getElementById('comboModal').classList.remove('active');
-            pendingCombo = null;
-        }
-
         async function savePreferencesAndContinue() {
-            // For now, just store in sessionStorage
-            // Later we'll save to database via API
-            sessionStorage.setItem('likedTags', JSON.stringify(likedTags));
+            // Store preferences in sessionStorage
+            sessionStorage.setItem('selectedTags', JSON.stringify(selectedTags));
             sessionStorage.setItem('excludedTags', JSON.stringify(excludedTags));
-            sessionStorage.setItem('comboTags', JSON.stringify(comboTags));
+            sessionStorage.setItem('excludedContent', JSON.stringify(excludedContent));
 
             // Navigate to recommendations
             window.location.href = 'recommendations.html';

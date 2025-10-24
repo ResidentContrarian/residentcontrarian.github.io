@@ -7,19 +7,22 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    const likedParam = req.query.liked;
+    const selectedParam = req.query.selected || req.query.liked; // Support both new and old
     const excludedParam = req.query.excluded;
-    const combosParam = req.query.combos;
+    const excludedContentParam = req.query.excludedContent;
 
-    if (!likedParam) {
-      return res.status(400).json({ error: 'Liked tags parameter required' });
+    if (!selectedParam) {
+      return res.status(400).json({ error: 'Selected tags parameter required' });
     }
 
-    const likedTags = likedParam.split(',').filter(Boolean);
+    const selectedTags = selectedParam.split(',').filter(Boolean);
     const excludedTags = excludedParam ? excludedParam.split(',').filter(Boolean) : [];
-    const comboTags = combosParam ? JSON.parse(combosParam) : [];
+    const excludedContent = excludedContentParam ? excludedContentParam.split(',').filter(Boolean) : [];
 
-    const recommendations = await getRecommendationsByPreferences(likedTags, excludedTags, comboTags);
+    // Combine all exclusions
+    const allExclusions = [...excludedTags, ...excludedContent];
+
+    const recommendations = await getRecommendationsByPreferences(selectedTags, allExclusions);
 
     res.status(200).json(recommendations);
   } catch (error) {

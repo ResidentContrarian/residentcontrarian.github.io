@@ -244,11 +244,11 @@
             currentUser = Clerk.user;
 
             // Get tag preferences from sessionStorage
-            const likedTags = JSON.parse(sessionStorage.getItem('likedTags') || '[]');
+            const selectedTags = JSON.parse(sessionStorage.getItem('selectedTags') || '[]');
             const excludedTags = JSON.parse(sessionStorage.getItem('excludedTags') || '[]');
-            const comboTags = JSON.parse(sessionStorage.getItem('comboTags') || '[]');
+            const excludedContent = JSON.parse(sessionStorage.getItem('excludedContent') || '[]');
 
-            if (likedTags.length === 0) {
+            if (selectedTags.length === 0) {
                 window.location.href = 'select-tags.html';
                 return;
             }
@@ -261,20 +261,20 @@
             document.getElementById('greeting').textContent = `Hello, ${displayName}!`;
 
             // Load recommendations
-            loadRecommendations(likedTags, excludedTags, comboTags);
+            loadRecommendations(selectedTags, excludedTags, excludedContent);
         });
 
         // Fetch recommendations
-        async function loadRecommendations(likedTags, excludedTags, comboTags) {
+        async function loadRecommendations(selectedTags, excludedTags, excludedContent) {
             try {
                 // Build query params
                 const params = new URLSearchParams();
-                params.append('liked', likedTags.join(','));
+                params.append('selected', selectedTags.join(','));
                 if (excludedTags.length > 0) {
                     params.append('excluded', excludedTags.join(','));
                 }
-                if (comboTags.length > 0) {
-                    params.append('combos', JSON.stringify(comboTags));
+                if (excludedContent.length > 0) {
+                    params.append('excludedContent', excludedContent.join(','));
                 }
 
                 const response = await fetch(`/api/recommendations?${params.toString()}`);
