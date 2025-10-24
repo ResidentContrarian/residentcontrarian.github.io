@@ -71,6 +71,39 @@
     ></script>
 
     <script>
+        // Define sign-in functions in global scope so onclick handlers can access them
+        async function signInWithGoogle() {
+            await Clerk.authenticateWithRedirect({
+                strategy: 'oauth_google',
+                redirectUrl: '/sso-callback',
+                redirectUrlComplete: '/select-tags.html'
+            });
+        }
+
+        async function signInWithDiscord() {
+            await Clerk.authenticateWithRedirect({
+                strategy: 'oauth_discord',
+                redirectUrl: '/sso-callback',
+                redirectUrlComplete: '/select-tags.html'
+            });
+        }
+
+        async function signInWithMicrosoft() {
+            await Clerk.authenticateWithRedirect({
+                strategy: 'oauth_microsoft',
+                redirectUrl: '/sso-callback',
+                redirectUrlComplete: '/select-tags.html'
+            });
+        }
+
+        async function signInWithEmail() {
+            await Clerk.authenticateWithRedirect({
+                strategy: 'email_code',
+                redirectUrl: '/sso-callback',
+                redirectUrlComplete: '/select-tags.html'
+            });
+        }
+
         window.addEventListener("load", async function () {
             await Clerk.load();
 
@@ -105,38 +138,6 @@
                 </div>
             `;
         });
-
-        async function signInWithGoogle() {
-            await Clerk.authenticateWithRedirect({
-                strategy: 'oauth_google',
-                redirectUrl: '/sso-callback',
-                redirectUrlComplete: '/select-tags.html'
-            });
-        }
-
-        async function signInWithDiscord() {
-            await Clerk.authenticateWithRedirect({
-                strategy: 'oauth_discord',
-                redirectUrl: '/sso-callback',
-                redirectUrlComplete: '/select-tags.html'
-            });
-        }
-
-        async function signInWithMicrosoft() {
-            await Clerk.authenticateWithRedirect({
-                strategy: 'oauth_microsoft',
-                redirectUrl: '/sso-callback',
-                redirectUrlComplete: '/select-tags.html'
-            });
-        }
-
-        async function signInWithEmail() {
-            await Clerk.authenticateWithRedirect({
-                strategy: 'email_code',
-                redirectUrl: '/sso-callback',
-                redirectUrlComplete: '/select-tags.html'
-            });
-        }
     </script>
 </body>
 </html>
