@@ -1,4 +1,4 @@
-import { getRecommendationsByTags } from '../lib/db.js';
+import { getRecommendationsByPreferences } from '../lib/db.js';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -7,14 +7,19 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    const tagsParam = req.query.tags;
+    const likedParam = req.query.liked;
+    const excludedParam = req.query.excluded;
+    const combosParam = req.query.combos;
 
-    if (!tagsParam) {
-      return res.status(400).json({ error: 'Tags parameter required' });
+    if (!likedParam) {
+      return res.status(400).json({ error: 'Liked tags parameter required' });
     }
 
-    const tagSlugs = tagsParam.split(',');
-    const recommendations = await getRecommendationsByTags(tagSlugs);
+    const likedTags = likedParam.split(',').filter(Boolean);
+    const excludedTags = excludedParam ? excludedParam.split(',').filter(Boolean) : [];
+    const comboTags = combosParam ? JSON.parse(combosParam) : [];
+
+    const recommendations = await getRecommendationsByPreferences(likedTags, excludedTags, comboTags);
 
     res.status(200).json(recommendations);
   } catch (error) {

@@ -243,9 +243,12 @@
 
             currentUser = Clerk.user;
 
-            // Check if selected tags exist
-            const selectedTags = JSON.parse(sessionStorage.getItem('selectedTags') || '[]');
-            if (selectedTags.length === 0) {
+            // Get tag preferences from sessionStorage
+            const likedTags = JSON.parse(sessionStorage.getItem('likedTags') || '[]');
+            const excludedTags = JSON.parse(sessionStorage.getItem('excludedTags') || '[]');
+            const comboTags = JSON.parse(sessionStorage.getItem('comboTags') || '[]');
+
+            if (likedTags.length === 0) {
                 window.location.href = 'select-tags.html';
                 return;
             }
@@ -258,14 +261,23 @@
             document.getElementById('greeting').textContent = `Hello, ${displayName}!`;
 
             // Load recommendations
-            loadRecommendations(selectedTags);
+            loadRecommendations(likedTags, excludedTags, comboTags);
         });
 
         // Fetch recommendations
-        async function loadRecommendations(selectedTags) {
+        async function loadRecommendations(likedTags, excludedTags, comboTags) {
             try {
-                const tagsParam = selectedTags.join(',');
-                const response = await fetch(`/api/recommendations?tags=${encodeURIComponent(tagsParam)}`);
+                // Build query params
+                const params = new URLSearchParams();
+                params.append('liked', likedTags.join(','));
+                if (excludedTags.length > 0) {
+                    params.append('excluded', excludedTags.join(','));
+                }
+                if (comboTags.length > 0) {
+                    params.append('combos', JSON.stringify(comboTags));
+                }
+
+                const response = await fetch(`/api/recommendations?${params.toString()}`);
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch recommendations');
