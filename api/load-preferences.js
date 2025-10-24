@@ -13,14 +13,15 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    // Get user from Clerk session
-    const sessionId = req.headers.authorization?.replace('Bearer ', '');
-    if (!sessionId) {
+    // Get user from Clerk session token
+    const sessionToken = req.headers.authorization?.replace('Bearer ', '');
+    if (!sessionToken) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const session = await clerk.sessions.getSession(sessionId);
-    const userId = session.userId;
+    // Verify the session token and extract user ID
+    const sessionClaims = await clerk.verifyToken(sessionToken);
+    const userId = sessionClaims.sub; // 'sub' claim contains the user ID
 
     // Ensure user exists in database (auto-create if needed)
     const user = await clerk.users.getUser(userId);
