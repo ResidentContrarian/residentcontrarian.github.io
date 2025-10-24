@@ -641,11 +641,16 @@
                         <input type="checkbox"
                                id="tag-${masterSwitch.slug}"
                                value="${masterSwitch.slug}"
-                               ${isSelected ? 'checked' : ''}
                                onchange="handleMasterSwitch('${category}', '${masterSwitch.slug}', this.checked)">
                         <label for="tag-${masterSwitch.slug}">${masterSwitch.name}</label>
                     `;
                     content.appendChild(masterDiv);
+
+                    // Explicitly set checked property after adding to DOM
+                    if (isSelected) {
+                        const checkbox = masterDiv.querySelector('input[type="checkbox"]');
+                        checkbox.checked = true;
+                    }
                 }
 
                 // Sub-genres
@@ -665,7 +670,6 @@
                         <input type="checkbox"
                                id="tag-${tag.slug}"
                                value="${tag.slug}"
-                               ${isSelected ? 'checked' : ''}
                                ${isDisabled ? 'disabled' : ''}
                                onchange="handleTagChange('${tag.slug}', this.checked)">
                         <label for="tag-${tag.slug}" class="${isDisabled ? 'disabled' : ''}">
@@ -674,6 +678,12 @@
                         </label>
                     `;
                     subGenresDiv.appendChild(tagOption);
+
+                    // Explicitly set checked property after adding to DOM
+                    if (isSelected) {
+                        const checkbox = tagOption.querySelector('input[type="checkbox"]');
+                        checkbox.checked = true;
+                    }
                 });
 
                 content.appendChild(subGenresDiv);
@@ -725,11 +735,16 @@
                         <input type="checkbox"
                                id="tag-${tag.slug}"
                                value="${tag.slug}"
-                               ${isSelected ? 'checked' : ''}
                                onchange="handleContentWarning('${tag.slug}', this.checked)">
                         <label for="tag-${tag.slug}">${tag.name}</label>
                     `;
                     grid.appendChild(tagOption);
+
+                    // Explicitly set checked property after adding to DOM
+                    if (isSelected) {
+                        const checkbox = tagOption.querySelector('input[type="checkbox"]');
+                        checkbox.checked = true;
+                    }
                 });
             }
 

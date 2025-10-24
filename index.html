@@ -76,7 +76,28 @@
 
             // Check if user is already signed in
             if (Clerk.user) {
-                // User is signed in, redirect to tag selection
+                // User is signed in - check if they have saved preferences
+                try {
+                    const sessionToken = await Clerk.session.getToken();
+                    const response = await fetch('/api/load-preferences', {
+                        headers: {
+                            'Authorization': `Bearer ${sessionToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const prefs = await response.json();
+                        if (prefs.selectedTags && prefs.selectedTags.length > 0) {
+                            // Returning user with preferences - go to recommendations
+                            window.location.href = '/recommendations.html';
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.log('No saved preferences, sending to tag selection');
+                }
+
+                // New user or no preferences - go to tag selection
                 window.location.href = '/select-tags.html';
                 return;
             }
