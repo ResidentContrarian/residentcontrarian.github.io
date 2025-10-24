@@ -1,8 +1,8 @@
 // app/api/jane/route.js
-export const runtime = 'edge'; // Neon works great on the edge runtime
+export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
-import { ensureSchema, upsertUserWithTags, getRecommendations, sql } from '@/lib/db';
+import { ensureSchema, upsertUserWithTags, getRecommendations, sql } from '../../../lib/db';
 
 function parseTags(raw) {
   if (!raw) return [];
@@ -25,7 +25,6 @@ async function handle(payload) {
 
   const { user } = await upsertUserWithTags(name, tags);
 
-  // Echo back the user’s saved tags as names for the UI
   const savedTags = await sql/*sql*/`
     select t.name
     from user_tags ut
@@ -34,7 +33,6 @@ async function handle(payload) {
     order by t.name asc;
   `;
 
-  // Build tagId list for recommendation using either provided tags or saved ones
   let tagIds = [];
   if (tags.length) {
     const rows = await sql/*sql*/`select id from tags where name = any (${tags});`;
