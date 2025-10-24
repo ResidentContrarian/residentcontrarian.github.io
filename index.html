@@ -107,34 +107,34 @@
 
             // Add event listeners after Clerk is loaded
             document.getElementById('googleBtn').addEventListener('click', async () => {
-                await Clerk.authenticateWithRedirect({
+                await Clerk.client.signIn.authenticateWithRedirect({
                     strategy: 'oauth_google',
-                    redirectUrl: '/sso-callback',
-                    redirectUrlComplete: '/select-tags.html'
+                    redirectUrl: window.location.origin + '/sso-callback',
+                    redirectUrlComplete: window.location.origin + '/select-tags.html'
                 });
             });
 
             document.getElementById('discordBtn').addEventListener('click', async () => {
-                await Clerk.authenticateWithRedirect({
+                await Clerk.client.signIn.authenticateWithRedirect({
                     strategy: 'oauth_discord',
-                    redirectUrl: '/sso-callback',
-                    redirectUrlComplete: '/select-tags.html'
+                    redirectUrl: window.location.origin + '/sso-callback',
+                    redirectUrlComplete: window.location.origin + '/select-tags.html'
                 });
             });
 
             document.getElementById('microsoftBtn').addEventListener('click', async () => {
-                await Clerk.authenticateWithRedirect({
+                await Clerk.client.signIn.authenticateWithRedirect({
                     strategy: 'oauth_microsoft',
-                    redirectUrl: '/sso-callback',
-                    redirectUrlComplete: '/select-tags.html'
+                    redirectUrl: window.location.origin + '/sso-callback',
+                    redirectUrlComplete: window.location.origin + '/select-tags.html'
                 });
             });
 
             document.getElementById('emailBtn').addEventListener('click', async () => {
-                await Clerk.authenticateWithRedirect({
+                await Clerk.client.signIn.authenticateWithRedirect({
                     strategy: 'email_code',
-                    redirectUrl: '/sso-callback',
-                    redirectUrlComplete: '/select-tags.html'
+                    redirectUrl: window.location.origin + '/sso-callback',
+                    redirectUrlComplete: window.location.origin + '/select-tags.html'
                 });
             });
         });
